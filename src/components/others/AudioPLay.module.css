@@ -1,0 +1,60 @@
+.uploadWrapper {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  min-height: 400px;
+  background-color: #f9fafb;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  cursor: pointer;
+}
+.uploadWrapper:hover {
+  opacity: 0.9;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+.uploadInputWrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.uploadIcon {
+  font-size: 50px;
+  color: #fa8c16;
+  margin-bottom: 12px;
+}
+
+.uploadPara {
+  font-size: 24px;
+  font-weight: 500;
+}
+
+.listAudioWrapper {
+  width: 100%;
+  min-height: 400px;
+  background-color: #f9fafb;
+  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+}
+
+.audioPlayWrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.volumeControlWrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.volumeSliderContainer {
+  display: block;
+}
+
+.volumeSlider {
+  width: 150px;
+  position: absolute;
+  left: 40px;
+  z-index: 1000;
+}

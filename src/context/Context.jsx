@@ -7,6 +7,14 @@ function Provider({ children }) {
   const [text, setText] = useState(null);
   const [loading, setLoading] = useState(true);
   const [audioCtx, setAudioCtx] = useState(null);
+  const [uploadedFile, setUploadedFile] = useState(false);
+  const [playing, setPlaying] = useState(false);
+  const [currentTime, setCurrentTime] = useState(0);
+  const [duration, setDuration] = useState(0);
+  const [volume, setVolume] = useState(1);
+  const [muted, setMuted] = useState(false);
+  const [playbackRate, setPlaybackRate] = useState(1);
+  const [sliderVisible, setSliderVisible] = useState(false);
   useEffect(() => {
     const fetchData = async () => {
       const resp = await axios.get("http://localhost:9999/data");
@@ -24,6 +32,22 @@ function Provider({ children }) {
         setLoading,
         setAudioCtx,
         audioCtx,
+        setUploadedFile,
+        uploadedFile,
+        playing,
+        setPlaying,
+        currentTime,
+        setCurrentTime,
+        duration,
+        setDuration,
+        volume,
+        setVolume,
+        muted,
+        setMuted,
+        playbackRate,
+        setPlaybackRate,
+        sliderVisible,
+        setSliderVisible,
       }}
     >
       {children}
