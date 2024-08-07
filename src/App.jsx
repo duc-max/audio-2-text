@@ -2,7 +2,7 @@ import "./App.css";
 import Provider from "./context/Context";
 import Navbar from "./components/Navbar.jsx";
 import Carou from "./components/NavButton.jsx";
-import { Layout} from "antd";
+import { Layout } from "antd";
 import ProductOV from "./components/ProductOV.jsx";
 import AppFooter from "./components/Footer.jsx";
 import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
@@ -23,9 +23,8 @@ function App() {
             background: colorBgContainer,
           }}
         >
-          
           <Carou />
-          <Input />
+          <Converter />
         </Layout>
       </Layout>
     </Provider>
