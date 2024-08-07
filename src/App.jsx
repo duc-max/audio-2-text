@@ -9,6 +9,7 @@ import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
 import Input from "./components/Input.jsx";
 import Converter from "./components/Converter.jsx";
 import { theme } from "antd";
+import Detailed from "./components/Detailed.jsx";
 
 function App() {
   const {
