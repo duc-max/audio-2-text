@@ -5,70 +5,81 @@ const { Dragger } = Upload;
 const { Content } = Layout;
 import { Layout, theme } from "antd";
 import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
-import { useContext } from "react";
+import { useContext, useState } from "react";
 import { Context } from "../context/Context";
-
-const props = {
-  name: "file",
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-  accept: ".mp3, .wav, .ogg, .flac, .aac, .m4a, .wma",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      let reader = new FileReader();
-      reader.onload = async (e) => {
-        const arrayBuffer = e.target.result;
-        const audioContext = new (window.AudioContext ||
-          window.webkitAudioContext)();
-        try {
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-          const sampleRate = audioBuffer.sampleRate;
-          console.log(`Original sample rate: ${sampleRate} Hz`);
-
-          // Convert sample rate to 16000 Hz
-          const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
-          const nChannels = audioBuffer.numberOfChannels;
-          const inputSampleRate = sampleRate;
-          const outputSampleRate = 16000;
-
-          const src = await create(
-            nChannels,
-            inputSampleRate,
-            outputSampleRate,
-            {
-              converterType: converterType,
-            }
-          );
-
-          const inputData = audioBuffer.getChannelData(0); // Assuming mono audio
-          const resampledData = src.simple(inputData);
-          src.destroy(); // Clean up
-
-          console.log(`Resampled data length: ${resampledData.length}`);
-          console.log(`Resampled sample rate: ${outputSampleRate} Hz`);
-        } catch (error) {
-          console.error("Error decoding or resampling audio data:", error);
-        }
-      };
-      reader.readAsArrayBuffer(info.file.originFileObj);
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
+import AudioPlayer from "./AudioControl/AudioPlay";
 
 const Input = () => {
+  const [uploadedFile, setUploadedFile] = useState(null);
+
   let { audioCtx, setAudioCtx } = useContext(Context);
+
+  const props = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    accept: ".mp3, .wav, .ogg, .flac, .aac, .m4a, .wma",
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        let reader = new FileReader();
+        reader.onload = async (e) => {
+          const arrayBuffer = e.target.result;
+          const audioContext = new (window.AudioContext ||
+            window.webkitAudioContext)();
+          try {
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            const sampleRate = audioBuffer.sampleRate;
+            console.log(`Original sample rate: ${sampleRate} Hz`);
+
+            // Convert sample rate to 16000 Hz
+            const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
+            const nChannels = audioBuffer.numberOfChannels;
+            const inputSampleRate = sampleRate;
+            const outputSampleRate = 16000;
+
+            const src = await create(
+              nChannels,
+              inputSampleRate,
+              outputSampleRate,
+              {
+                converterType: converterType,
+              }
+            );
+
+            const inputData = audioBuffer.getChannelData(0); // Assuming mono audio
+            const resampledData = src.simple(inputData);
+            src.destroy();
+
+            console.log(`Resampled data length: ${resampledData.length}`);
+            console.log(`Resampled sample rate: ${outputSampleRate} Hz`);
+            setUploadedFile({
+              fileName: info.file.name,
+              audioSrc: URL.createObjectURL(info.file.originFileObj),
+            });
+          } catch (error) {
+            console.error("Error decoding or resampling audio data:", error);
+          }
+        };
+        reader.readAsArrayBuffer(info.file.originFileObj);
+        if (status === "done") {
+          message.success(`${info.file.name} file uploaded successfully.`);
+        } else if (status === "error") {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      }
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
 
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const clearFile = () => {
+    setUploadedFile(null);
+  };
   return (
     <Content
       style={{
@@ -87,43 +98,62 @@ const Input = () => {
           width: "90%",
         }}
       >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined accept=".mp3" />
-          </p>
-          <p
-            className="ant-upload-text"
-            style={{ fontSize: "22px", position: "relative" }}
-          >
-            Drop audio file here
-          </p>
-          <Divider style={{ margin: "2px auto" }}>
+        {uploadedFile ? (
+          <>
+            <AudioPlayer
+              fileName={uploadedFile.fileName}
+              audioSrc={uploadedFile.audioSrc}
+            />
+            <div style={{ textAlign: "center", marginTop: "20px" }}>
+              <Button onClick={clearFile} style={{ marginRight: "10px" }}>
+                Clear
+              </Button>
+              <Button type="primary">Submit</Button>
+            </div>
+          </>
+        ) : (
+          <Dragger {...props}>
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined accept=".mp3" />
+            </p>
             <p
-              className="ant-upload-hint "
+              className="ant-upload-text"
               style={{ fontSize: "22px", position: "relative" }}
             >
-              or
+              Drop audio file here
             </p>
-          </Divider>
-          <p
-            className="ant-upload-text"
-            style={{ fontSize: "22px", position: "relative" }}
-          >
-            Click to upload
-          </p>
-          <Button
-            icon={<UploadOutlined />}
-            style={{ margin: "10px 0", position: "relative" }}
-          >
-            Click to Upload
-          </Button>
-          <p
-            className="ant-upload-hint"
-            style={{ fontSize: "12px", margin: "10px 0", position: "relative" }}
-          >
-            {`Supported file extensions : ${props.accept} `}
-          </p>
-        </Dragger>
+            <Divider style={{ margin: "2px auto" }}>
+              <p
+                className="ant-upload-hint "
+                style={{ fontSize: "22px", position: "relative" }}
+              >
+                or
+              </p>
+            </Divider>
+            <p
+              className="ant-upload-text"
+              style={{ fontSize: "22px", position: "relative" }}
+            >
+              Click to upload
+            </p>
+            <Button
+              icon={<UploadOutlined />}
+              style={{ margin: "10px 0", position: "relative" }}
+            >
+              Click to Upload
+            </Button>
+            <p
+              className="ant-upload-hint"
+              style={{
+                fontSize: "12px",
+                margin: "10px 0",
+                position: "relative",
+              }}
+            >
+              {`Supported file extensions : ${props.accept} `}
+            </p>
+          </Dragger>
+        )}
       </div>
     </Content>
   );
