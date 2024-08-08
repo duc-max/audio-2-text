@@ -5,20 +5,19 @@ const { Dragger } = Upload;
 const { Content } = Layout;
 import { Layout, theme } from "antd";
 import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
+
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import AudioPlayer from "./others/AudioPlay";
 import Converter from "./Converter";
 
 const Input = () => {
-  // const { fetchData } = useContext(Context);
   const props = {
     name: "file",
     action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
     accept: ".mp3, .wav, .ogg, .flac, .aac, .m4a, .wma",
     onChange(info) {
       const { status } = info.file;
-      // fetchData(info.file)
       if (status !== "uploading") {
         console.log(info.file, info.fileList);
         let reader = new FileReader();
@@ -54,7 +53,6 @@ const Input = () => {
               fileName: info.file.name,
               audioSrc: URL.createObjectURL(info.file.originFileObj),
             });
-
             console.log(`Resampled data length: ${resampledData.length}`);
             console.log(`Resampled sample rate: ${outputSampleRate} Hz`);
           } catch (error) {

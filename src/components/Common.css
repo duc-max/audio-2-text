@@ -1,0 +1,12 @@
+.list-audio-wrapper {
+  display: flex;
+  justify-content: space-between;
+}
+
+.list-audio-wrapper .transcription {
+  display: block;
+  width: 400px;
+  overflow-wrap: break-word;
+  word-wrap: normal;
+  white-space: normal;
+}
