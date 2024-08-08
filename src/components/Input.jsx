@@ -1,12 +1,13 @@
 import "react";
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { message, Upload, Divider, Button } from "antd";
+import { message, Upload, Divider, Button, Col, Row } from "antd";
 const { Dragger } = Upload;
 const { Content } = Layout;
 import { Layout, theme } from "antd";
 import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
-import { useContext } from "react";
+import { useContext} from "react";
 import { Context } from "../context/Context";
+import AudioPlayer from "./others/AudioPlay";
 
 const props = {
   name: "file",
@@ -15,11 +16,12 @@ const props = {
   onChange(info) {
     const { status } = info.file;
     if (status !== "uploading") {
+      console.log(info.file, info.fileList);
       let reader = new FileReader();
       reader.onload = async (e) => {
         const arrayBuffer = e.target.result;
-        const audioContext = new (window.AudioContext ||
-          window.webkitAudioContext)();
+        console.log(arrayBuffer);
+        const audioContext = new (window.AudioContext || window.AudioContext)();
         try {
           const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
           const sampleRate = audioBuffer.sampleRate;
@@ -64,11 +66,14 @@ const props = {
 };
 
 const Input = () => {
-  let { audioCtx, setAudioCtx } = useContext(Context);
-
+  let { uploadedFile, setUploadedFile } = useContext(Context);
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
+
+  const clearFile = () => {
+    setUploadedFile(null);
+  };
   return (
     <Content
       style={{
@@ -77,54 +82,75 @@ const Input = () => {
         background: colorBgContainer,
       }}
     >
-      <div
-        style={{
-          margin: "0px auto",
-          minHeight: 360,
-          background: colorBgContainer,
-          borderRadius: borderRadiusLG,
-          height: "50%",
-          width: "90%",
-        }}
-      >
-        <Dragger {...props}>
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined accept=".mp3" />
-          </p>
-          <p
-            className="ant-upload-text"
-            style={{ fontSize: "22px", position: "relative" }}
-          >
-            Drop audio file here
-          </p>
-          <Divider style={{ margin: "2px auto" }}>
-            <p
-              className="ant-upload-hint "
-              style={{ fontSize: "22px", position: "relative" }}
-            >
-              or
-            </p>
-          </Divider>
-          <p
-            className="ant-upload-text"
-            style={{ fontSize: "22px", position: "relative" }}
-          >
-            Click to upload
-          </p>
-          <Button
-            icon={<UploadOutlined />}
-            style={{ margin: "10px 0", position: "relative" }}
-          >
-            Click to Upload
-          </Button>
-          <p
-            className="ant-upload-hint"
-            style={{ fontSize: "12px", margin: "10px 0", position: "relative" }}
-          >
-            {`Supported file extensions : ${props.accept} `}
-          </p>
-        </Dragger>
-      </div>
+      <Row>
+        <Col
+          style={{
+            margin: "0px auto",
+            minHeight: 360,
+            background: colorBgContainer,
+            borderRadius: borderRadiusLG,
+            height: "50%",
+            width: "90%",
+          }}
+        >
+          {uploadedFile ? (
+            <>
+              <AudioPlayer
+                fileName={uploadedFile.fileName}
+                audioSrc={uploadedFile.audioSrc}
+              />
+              <div style={{ textAlign: "center", marginTop: "20px" }}>
+                <Button onClick={clearFile} style={{ marginRight: "10px" }}>
+                  Clear
+                </Button>
+                <Button type="primary">Submit</Button>
+              </div>
+            </>
+          ) : (
+            <Dragger {...props}>
+              <p className="ant-upload-drag-icon">
+                <InboxOutlined accept=".mp3" />
+              </p>
+              <p
+                className="ant-upload-text"
+                style={{ fontSize: "22px", position: "relative" }}
+              >
+                Drop audio file here
+              </p>
+              <Divider style={{ margin: "2px auto" }}>
+                <p
+                  className="ant-upload-hint "
+                  style={{ fontSize: "22px", position: "relative" }}
+                >
+                  or
+                </p>
+              </Divider>
+              <p
+                className="ant-upload-text"
+                style={{ fontSize: "22px", position: "relative" }}
+              >
+                Click to upload
+              </p>
+              <Button
+                icon={<UploadOutlined />}
+                style={{ margin: "10px 0", position: "relative" }}
+              >
+                Click to Upload
+              </Button>
+              <p
+                className="ant-upload-hint"
+                style={{
+                  fontSize: "12px",
+                  margin: "10px 0",
+                  position: "relative",
+                }}
+              >
+                {`Supported file extensions : ${props.accept} `}
+              </p>
+            </Dragger>
+          )}
+        </Col>
+      </Row>
     </Content>
   );
 };
