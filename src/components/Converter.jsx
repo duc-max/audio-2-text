@@ -3,50 +3,7 @@ import { Layout, theme } from "antd";
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
-import Detailed from "./others/Modal";
 import "./Common.css";
-const dataset1 = [
-  {
-    filename: "happy_01.wav",
-    emotions: [
-      { emotion: "Happiness", value: "90%" },
-      { emotion: "Neutral", value: "10%" },
-    ],
-    transcription: "I just received the best news ever",
-  },
-  {
-    filename: "sad_01.wav",
-    emotions: [
-      { emotion: "Sadness", value: "85%" },
-      { emotion: "Neutral", value: "15%" },
-    ],
-    transcription: "I'm feeling really down today.",
-  },
-  {
-    filename: "angry_01.wav",
-    emotions: [
-      { emotion: "Anger", value: "95%" },
-      { emotion: "Neutral", value: "5%" },
-    ],
-    transcription: "This situation is completely unacceptable.",
-  },
-  {
-    filename: "fear_01.wav",
-    emotions: [
-      { emotion: "Fear", value: "80%" },
-      { emotion: "Neutral", value: "20%" },
-    ],
-    transcription: "I'm really scared about what's happening.",
-  },
-  {
-    filename: "surprise_01.wav",
-    emotions: [
-      { emotion: "Surprise", value: "90%" },
-      { emotion: "Neutral", value: "10%" },
-    ],
-    transcription: "Wow, I didn't see that coming at all!",
-  },
-];
 
 const colors = {
   Happiness: "#ffa940",
@@ -58,6 +15,105 @@ const colors = {
 };
 
 function Converter() {
+  const data2 = {
+    status: 0,
+    statusCode: 200,
+    object: [
+      {
+        id: "A",
+        text: " xin chào ",
+        emotion: [
+          {
+            key: " vui",
+            percent: 10,
+          },
+          {
+            key: " bình thường",
+            percent: 50,
+          },
+          {
+            key: " sợ",
+            percent: 40,
+          },
+          {
+            key: " vui",
+            percent: 10,
+          },
+          {
+            key: " bình thường",
+            percent: 50,
+          },
+          {
+            key: " sợ",
+            percent: 40,
+          },
+        ],
+      },
+      {
+        id: "B",
+        text: " xin chào ",
+        emotion: [
+          {
+            key: " vui",
+            percent: 10,
+          },
+          {
+            key: " bình thường",
+            percent: 50,
+          },
+          {
+            key: " sợ",
+            percent: 40,
+          },
+          {
+            key: " vui",
+            percent: 10,
+          },
+          {
+            key: " bình thường",
+            percent: 50,
+          },
+          {
+            key: " sợ",
+            percent: 40,
+          },
+        ],
+      },
+      {
+        id: "B",
+        text: " xin chào ",
+        emotion: [
+          {
+            key: " vui",
+            percent: 10,
+          },
+          {
+            key: " bình thường",
+            percent: 50,
+          },
+          {
+            key: " sợ",
+            percent: 40,
+          },
+          {
+            key: " vui",
+            percent: 10,
+          },
+          {
+            key: " bình thường",
+            percent: 50,
+          },
+          {
+            key: " sợ",
+            percent: 40,
+          },
+        ],
+      },
+    ],
+    isOk: true,
+    isError: false,
+  };
+
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
@@ -69,6 +125,7 @@ function Converter() {
     setSelectedDetail,
     percentage,
     setPercentage,
+    data,
   } = useContext(Context);
 
   useEffect(() => {
@@ -90,7 +147,7 @@ function Converter() {
             clearInterval(intervalId);
             setLoading(false);
           }
-        }, 1000); // Fixed interval of 1000 milliseconds (1 second)
+        }, 200); // Fixed interval of 1000 milliseconds (1 second)
       };
 
       loadApi();
@@ -103,6 +160,7 @@ function Converter() {
 
   return (
     <Content
+      className="container"
       style={{
         margin: "24px 16px 0",
       }}
@@ -112,7 +170,14 @@ function Converter() {
           minHeight: 360,
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
-          padding: "0 24px",
+          padding: "0 24 24 24",
+          ...(loading == false
+            ? {
+                overflowY: "scroll",
+                overflowX: "hidden",
+                height: "200px",
+              }
+            : {}),
         }}
       >
         {loading ? <Progress percent={percentage} /> : ""}
@@ -121,13 +186,18 @@ function Converter() {
             <List
               itemLayout="vertical"
               size="default"
-              dataSource={dataset1}
+              dataSource={data.object}
+              style={{ height: "100%" }}
               renderItem={(item, i) => (
                 <List.Item key={i}>
                   <Skeleton loading={loading == true} active avatar paragraph>
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
-                      avatar={<Avatar src={`../assets/speaker${i}.png`} />}
+                      avatar={
+                        <Avatar
+                          src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${item.id}`}
+                        />
+                      }
                       title={
                         <a
                           onClick={() => {
@@ -135,30 +205,26 @@ function Converter() {
                             setSelectedDetail(item);
                           }}
                         >
-                          {item.filename}
+                          Person : {item.id}
                         </a>
                       }
                     />
                     <div className="list-audio-wrapper">
-                      <span className="transcription">
-                        {item.transcription}
-                      </span>
+                      <span className="transcription">{item.text}</span>
                       <span>
-                        {item.emotions.map((e, index) => (
-                          <span
+                        {item.emotion.map((e, index) => (
+                          <p
                             key={index}
-                            style={{ color: getEmotionColor(e.emotion) }}
+                            style={{ color: getEmotionColor(e.key) }}
                           >
-                            {e.emotion}
-                            {index < item.emotions.length - 1 ? ", " : ""}
-                          </span>
+                            {e.key.charAt(0).toUpperCase() + e.key.slice(1)}:{" "}
+                            {e.percent}%
+                            {index < item.emotion.length - 1 ? ", " : ""}
+                          </p>
                         ))}
                       </span>
                     </div>
                   </Skeleton>
-                  {selectedDetail && (
-                    <Detailed emotions={selectedDetail.emotions} />
-                  )}
                 </List.Item>
               )}
             />
