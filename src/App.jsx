@@ -15,8 +15,9 @@ function App() {
 
   return (
     <Provider>
-      <Layout style={{ background: colorBgContainer, height: "100vh" }}>
-        <Router>
+      <Router>
+        <Layout style={{ background: colorBgContainer, height: "100vh" , width: '100vw' ,paddingBottom:'100px'}}>
+          
           <Navbar />
           <Carou />
           <Layout
@@ -33,8 +34,8 @@ function App() {
               })}
             </Routes>
           </Layout>
-        </Router>
-      </Layout>
+        </Layout>
+      </Router>
     </Provider>
   );
 }
