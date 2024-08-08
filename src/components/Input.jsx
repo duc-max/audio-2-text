@@ -5,67 +5,71 @@ const { Dragger } = Upload;
 const { Content } = Layout;
 import { Layout, theme } from "antd";
 import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
-import { useContext} from "react";
+import { useContext } from "react";
 import { Context } from "../context/Context";
 import AudioPlayer from "./others/AudioPlay";
 
-const props = {
-  name: "file",
-  action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
-  accept: ".mp3, .wav, .ogg, .flac, .aac, .m4a, .wma",
-  onChange(info) {
-    const { status } = info.file;
-    if (status !== "uploading") {
-      console.log(info.file, info.fileList);
-      let reader = new FileReader();
-      reader.onload = async (e) => {
-        const arrayBuffer = e.target.result;
-        console.log(arrayBuffer);
-        const audioContext = new (window.AudioContext || window.AudioContext)();
-        try {
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-          const sampleRate = audioBuffer.sampleRate;
-          console.log(`Original sample rate: ${sampleRate} Hz`);
-
-          // Convert sample rate to 16000 Hz
-          const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
-          const nChannels = audioBuffer.numberOfChannels;
-          const inputSampleRate = sampleRate;
-          const outputSampleRate = 16000;
-
-          const src = await create(
-            nChannels,
-            inputSampleRate,
-            outputSampleRate,
-            {
-              converterType: converterType,
-            }
-          );
-
-          const inputData = audioBuffer.getChannelData(0); // Assuming mono audio
-          const resampledData = src.simple(inputData);
-          src.destroy(); // Clean up
-
-          console.log(`Resampled data length: ${resampledData.length}`);
-          console.log(`Resampled sample rate: ${outputSampleRate} Hz`);
-        } catch (error) {
-          console.error("Error decoding or resampling audio data:", error);
-        }
-      };
-      reader.readAsArrayBuffer(info.file.originFileObj);
-      if (status === "done") {
-        message.success(`${info.file.name} file uploaded successfully.`);
-      } else if (status === "error") {
-        message.error(`${info.file.name} file upload failed.`);
-      }
-    }
-  },
-  onDrop(e) {
-    console.log("Dropped files", e.dataTransfer.files);
-  },
-};
-
 const Input = () => {
+  const props = {
+    name: "file",
+    action: "https://660d2bd96ddfa2943b33731c.mockapi.io/api/upload",
+    accept: ".mp3, .wav, .ogg, .flac, .aac, .m4a, .wma",
+    onChange(info) {
+      const { status } = info.file;
+      if (status !== "uploading") {
+        console.log(info.file, info.fileList);
+        let reader = new FileReader();
+        reader.onload = async (e) => {
+          const arrayBuffer = e.target.result;
+          console.log(arrayBuffer);
+          const audioContext = new (window.AudioContext ||
+            window.AudioContext)();
+          try {
+            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+            const sampleRate = audioBuffer.sampleRate;
+            console.log(`Original sample rate: ${sampleRate} Hz`);
+
+            // Convert sample rate to 16000 Hz
+            const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
+            const nChannels = audioBuffer.numberOfChannels;
+            const inputSampleRate = sampleRate;
+            const outputSampleRate = 16000;
+
+            const src = await create(
+              nChannels,
+              inputSampleRate,
+              outputSampleRate,
+              {
+                converterType: converterType,
+              }
+            );
+
+            const inputData = audioBuffer.getChannelData(0); // Assuming mono audio
+            const resampledData = src.simple(inputData);
+            src.destroy(); // Clean up
+            setUploadedFile({
+              fileName: info.file.name,
+              audioSrc: URL.createObjectURL(info.file.originFileObj),
+            });
+            console.log(`Resampled data length: ${resampledData.length}`);
+            console.log(`Resampled sample rate: ${outputSampleRate} Hz`);
+          } catch (error) {
+            console.error("Error decoding or resampling audio data:", error);
+          }
+        };
+        reader.readAsArrayBuffer(info.file.originFileObj);
+        if (status === "done") {
+          message.success(`${info.file.name} file uploaded successfully.`);
+        } else if (status === "error") {
+          message.error(`${info.file.name} file upload failed.`);
+        }
+      }
+    },
+    onDrop(e) {
+      console.log("Dropped files", e.dataTransfer.files);
+    },
+  };
+
   let { uploadedFile, setUploadedFile } = useContext(Context);
   const {
     token: { colorBgContainer, borderRadiusLG },
