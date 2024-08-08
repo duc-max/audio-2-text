@@ -22,6 +22,7 @@ function Navbar() {
       trigger={null}
       collapsible
       collapsed={collapsed}
+      position="fixed"
       theme="light"
       style={{ position: "relative", height: "100vh" }}
     >
@@ -39,9 +40,6 @@ function Navbar() {
           <Link to="/upload">Tải lên</Link>
         </Menu.Item>
         <Divider solid style={{ margin: "10px 0" }} />
-        <Menu.Item key="3" icon={<VideoCameraOutlined />} style={menuItemStyle}>
-          <Link to="/result">Kết quả</Link>
-        </Menu.Item>
       </Menu>
     </Sider>
   );
