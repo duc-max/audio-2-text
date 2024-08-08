@@ -90,7 +90,7 @@ function Converter() {
             clearInterval(intervalId);
             setLoading(false);
           }
-        }, 1000); // Fixed interval of 1000 milliseconds (1 second)
+        }, 1000);
       };
 
       loadApi();
