@@ -1,9 +1,10 @@
 const { Content } = Layout;
 import { Layout, theme } from "antd";
-import { useContext, useEffect, useState } from "react";
+import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
 import Detailed from "./others/Modal";
+import "./Common.css";
 const dataset1 = [
   {
     filename: "happy_01.wav",
@@ -11,7 +12,7 @@ const dataset1 = [
       { emotion: "Happiness", value: "90%" },
       { emotion: "Neutral", value: "10%" },
     ],
-    transcription: "I just received the best news ever!",
+    transcription: "I just received the best news ever",
   },
   {
     filename: "sad_01.wav",
@@ -46,6 +47,15 @@ const dataset1 = [
     transcription: "Wow, I didn't see that coming at all!",
   },
 ];
+
+const colors = {
+  Happiness: "#ffa940",
+  Sadness: "#8c8c8c",
+  Neutral: "#ad6800",
+  Anger: "#f5222d",
+  Fear: "#9254de",
+  Surprise: "#ffc53d",
+};
 
 function Converter() {
   const {
@@ -87,6 +97,10 @@ function Converter() {
     }
   }, [loading]);
 
+  const getEmotionColor = (emotion) => {
+    return colors[emotion] || "#000";
+  };
+
   return (
     <Content
       style={{
@@ -98,7 +112,7 @@ function Converter() {
           minHeight: 360,
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
-          padding: 24,
+          padding: "0 24px",
         }}
       >
         {loading ? <Progress percent={percentage} /> : ""}
@@ -112,11 +126,8 @@ function Converter() {
                 <List.Item key={i}>
                   <Skeleton loading={loading == true} active avatar paragraph>
                     <List.Item.Meta
-                      avatar={
-                        <Avatar
-                          src={`https://api.dicebear.com/7.x/miniavs/svg?seed=${i}`}
-                        />
-                      }
+                      style={{ marginBottom: "4px" }}
+                      avatar={<Avatar src={`../assets/speaker${i}.png`} />}
                       title={
                         <a
                           onClick={() => {
@@ -127,11 +138,23 @@ function Converter() {
                           {item.filename}
                         </a>
                       }
-                      description={item.emotions
-                        .map((e) => e.emotion)
-                        .join(", ")}
                     />
-                    {item.transcription}
+                    <div className="list-audio-wrapper">
+                      <span className="transcription">
+                        {item.transcription}
+                      </span>
+                      <span>
+                        {item.emotions.map((e, index) => (
+                          <span
+                            key={index}
+                            style={{ color: getEmotionColor(e.emotion) }}
+                          >
+                            {e.emotion}
+                            {index < item.emotions.length - 1 ? ", " : ""}
+                          </span>
+                        ))}
+                      </span>
+                    </div>
                   </Skeleton>
                   {selectedDetail && (
                     <Detailed emotions={selectedDetail.emotions} />
