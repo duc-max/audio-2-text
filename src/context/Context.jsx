@@ -17,7 +17,7 @@ function Provider({ children }) {
   const [open, setOpen] = useState(false);
   const [sliderVisible, setSliderVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
-
+  const [data, setData] = useState([]);
   
 
   return (
@@ -51,6 +51,8 @@ function Provider({ children }) {
         setSelectedDetail,
         percentage,
         setPercentage,
+        setData,
+        data,
       }}
     >
       {children}

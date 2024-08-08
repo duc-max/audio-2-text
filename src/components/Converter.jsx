@@ -46,6 +46,54 @@ const dataset1 = [
     ],
     transcription: "Wow, I didn't see that coming at all!",
   },
+  {
+    filename: "surprise_01.wav",
+    emotions: [
+      { emotion: "Surprise", value: "90%" },
+      { emotion: "Neutral", value: "10%" },
+    ],
+    transcription: "Wow, I didn't see that coming at all!",
+  },
+  {
+    filename: "surprise_01.wav",
+    emotions: [
+      { emotion: "Surprise", value: "90%" },
+      { emotion: "Neutral", value: "10%" },
+    ],
+    transcription: "Wow, I didn't see that coming at all!",
+  },
+  {
+    filename: "surprise_01.wav",
+    emotions: [
+      { emotion: "Surprise", value: "90%" },
+      { emotion: "Neutral", value: "10%" },
+    ],
+    transcription: "Wow, I didn't see that coming at all!",
+  },
+  {
+    filename: "surprise_01.wav",
+    emotions: [
+      { emotion: "Surprise", value: "90%" },
+      { emotion: "Neutral", value: "10%" },
+    ],
+    transcription: "Wow, I didn't see that coming at all!",
+  },
+  {
+    filename: "surprise_01.wav",
+    emotions: [
+      { emotion: "Surprise", value: "90%" },
+      { emotion: "Neutral", value: "10%" },
+    ],
+    transcription: "Wow, I didn't see that coming at all!",
+  },
+  {
+    filename: "surprise_01.wav",
+    emotions: [
+      { emotion: "Surprise", value: "90%" },
+      { emotion: "Neutral", value: "10%" },
+    ],
+    transcription: "Wow, I didn't see that coming at all!",
+  },
 ];
 
 const colors = {
@@ -90,7 +138,7 @@ function Converter() {
             clearInterval(intervalId);
             setLoading(false);
           }
-        }, 1000); // Fixed interval of 1000 milliseconds (1 second)
+        }, 200); // Fixed interval of 1000 milliseconds (1 second)
       };
 
       loadApi();
@@ -112,7 +160,14 @@ function Converter() {
           minHeight: 360,
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
-          padding: "0 24px",
+          padding: "0 24 24 24",
+          ...(loading == false
+            ? {
+                overflowY: "scroll",
+                overflowX: "hidden",
+                height: "200px",
+              }
+            : {}),
         }}
       >
         {loading ? <Progress percent={percentage} /> : ""}
@@ -122,9 +177,10 @@ function Converter() {
               itemLayout="vertical"
               size="default"
               dataSource={dataset1}
+              style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i}>
-                  <Skeleton loading={loading == true} active avatar paragraph>
+                <List.Item key={i} >
+                  <Skeleton loading={loading == true}  active avatar paragraph>
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
                       avatar={<Avatar src={`../assets/speaker${i}.png`} />}

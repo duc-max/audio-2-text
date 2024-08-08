@@ -1,7 +1,6 @@
 import {
   UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Divider } from "antd";
 const { Sider } = Layout;
@@ -30,8 +29,9 @@ function Navbar() {
         theme="light"
         mode="inline"
         defaultSelectedKeys={["1"]}
-        style={{ height: "100%", padding: "20px 0", paddingTop: "180px" }}
+        style={{ height: "100%", padding: "20px 0", paddingTop: "240px" }}
       >
+        <Divider solid style={{ margin: "10px 0" }} />
         <Menu.Item key="1" icon={<UserOutlined />} style={menuItemStyle}>
           <Link to="/">Giới thiệu </Link>
         </Menu.Item>
