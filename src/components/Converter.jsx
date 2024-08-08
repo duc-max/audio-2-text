@@ -1,4 +1,3 @@
-import React from "react";
 const { Content } = Layout;
 import { Layout, theme } from "antd";
 import { useContext } from "react";

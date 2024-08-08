@@ -53,6 +53,23 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     }
   }, [wavesurfer]);
 
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (
+        volumeControlRef.current &&
+        !volumeControlRef.current.contains(event.target)
+      ) {
+        setSliderVisible(false);
+      }
+    };
+
+    document.addEventListener("mousedown", handleClickOutside);
+
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [setSliderVisible]);
+
   const togglePlay = () => {
     if (wavesurfer) {
       wavesurfer.playPause();
