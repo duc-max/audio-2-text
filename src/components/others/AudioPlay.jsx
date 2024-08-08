@@ -70,6 +70,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     };
   }, [setSliderVisible]);
 
+
   const togglePlay = () => {
     if (wavesurfer) {
       wavesurfer.playPause();

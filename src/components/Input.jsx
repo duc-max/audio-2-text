@@ -5,9 +5,11 @@ const { Dragger } = Upload;
 const { Content } = Layout;
 import { Layout, theme } from "antd";
 import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
-import { useContext } from "react";
+
+import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import AudioPlayer from "./others/AudioPlay";
+import Converter from "./Converter";
 
 const Input = () => {
   const props = {
@@ -79,83 +81,93 @@ const Input = () => {
     setUploadedFile(null);
   };
   return (
-    <Content
-      style={{
-        margin: "14px 16px 0",
-        height: "10vh",
-        background: colorBgContainer,
-      }}
-    >
-      <Row>
-        <Col
-          style={{
-            margin: "0px auto",
-            minHeight: 360,
-            background: colorBgContainer,
-            borderRadius: borderRadiusLG,
-            height: "50%",
-            width: "90%",
-          }}
-        >
-          {uploadedFile ? (
-            <>
-              <AudioPlayer
-                fileName={uploadedFile.fileName}
-                audioSrc={uploadedFile.audioSrc}
-              />
-              <div style={{ textAlign: "center", marginTop: "20px" }}>
-                <Button onClick={clearFile} style={{ marginRight: "10px" }}>
-                  Clear
-                </Button>
-                <Button type="primary">Submit</Button>
-              </div>
-            </>
-          ) : (
-            <Dragger {...props}>
-              <p className="ant-upload-drag-icon">
-                <InboxOutlined accept=".mp3" />
-              </p>
-              <p
-                className="ant-upload-text"
-                style={{ fontSize: "22px", position: "relative" }}
-              >
-                Drop audio file here
-              </p>
-              <Divider style={{ margin: "2px auto" }}>
+    <Row gutter={[16, 16]}>
+    <Col xs={12} md={12} xl={12}>
+      <Content
+        style={{
+          margin: "14px 16px 0",
+          height: "10vh",
+          background: colorBgContainer,
+        }}
+      >
+        <Row justify="center">
+          <Col
+            xs={24}
+            md={24}
+            xl={24}
+            style={{
+              margin: "0px auto",
+              minHeight: 360,
+              background: colorBgContainer,
+              borderRadius: borderRadiusLG,
+              height: "50%",
+              width: "90%",
+            }}
+          >
+            {uploadedFile ? (
+              <>
+                <AudioPlayer
+                  fileName={uploadedFile.fileName}
+                  audioSrc={uploadedFile.audioSrc}
+                />
+                <div style={{ textAlign: "center", marginTop: "20px" }}>
+                  <Button onClick={clearFile} style={{ marginRight: "10px" }}>
+                    Clear
+                  </Button>
+                  <Button type="primary">Submit</Button>
+                </div>
+              </>
+            ) : (
+              <Dragger {...props}>
+                <p className="ant-upload-drag-icon">
+                  <InboxOutlined accept=".mp3" />
+                </p>
                 <p
-                  className="ant-upload-hint "
+                  className="ant-upload-text"
                   style={{ fontSize: "22px", position: "relative" }}
                 >
-                  or
+                  Drop audio file here
                 </p>
-              </Divider>
-              <p
-                className="ant-upload-text"
-                style={{ fontSize: "22px", position: "relative" }}
-              >
-                Click to upload
-              </p>
-              <Button
-                icon={<UploadOutlined />}
-                style={{ margin: "10px 0", position: "relative" }}
-              >
-                Click to Upload
-              </Button>
-              <p
-                className="ant-upload-hint"
-                style={{
-                  fontSize: "12px",
-                  margin: "10px 0",
-                  position: "relative",
-                }}
-              >
-                {`Supported file extensions : ${props.accept} `}
-              </p>
-            </Dragger>
-          )}
-        </Col>
-      </Row>
-    </Content>
+                <Divider style={{ margin: "2px auto" }}>
+                  <p
+                    className="ant-upload-hint "
+                    style={{ fontSize: "22px", position: "relative" }}
+                  >
+                    or
+                  </p>
+                </Divider>
+                <p
+                  className="ant-upload-text"
+                  style={{ fontSize: "22px", position: "relative" }}
+                >
+                  Click to upload
+                </p>
+                <Button
+                  icon={<UploadOutlined />}
+                  style={{ margin: "10px 0", position: "relative" }}
+                >
+                  Click to Upload
+                </Button>
+                <p
+                  className="ant-upload-hint"
+                  style={{
+                    fontSize: "12px",
+                    margin: "10px 0",
+                    position: "relative",
+                  }}
+                >
+                  {`Supported file extensions : ${props.accept} `}
+                </p>
+              </Dragger>
+            )}
+          </Col>
+        </Row>
+      </Content>
+    </Col>
+    <Col xs={12} md={12} xl={12}>
+      <Converter />
+    </Col>
+  </Row>
   );
 };
 export default Input;

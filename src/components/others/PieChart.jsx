@@ -45,7 +45,7 @@ const PieChart = () => {
   ];
   var config = {
     appendPadding: 50,
-    data: data,
+    data: props.emotions,
     angleField: "value",
     colorField: "type",
     radius: 0.8,

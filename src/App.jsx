@@ -16,13 +16,23 @@ function App() {
   return (
     <Provider>
       <Router>
-        <Layout style={{ background: colorBgContainer, height: "100vh" , width: '100vw' ,paddingBottom:'100px'}}>
-          
-          <Navbar />
-          <Carou />
+        <Layout
+          style={{
+            background: colorBgContainer,
+            height: "100vh",
+            width: "100vw",
+            position: "relative",
+            zIndex: 1,
+          }}
+        >
+          <Navbar style={{ zIndex: 2 }} />
+          <Carou style={{ zIndex: 1 }} />
           <Layout
             style={{
               background: colorBgContainer,
+              paddingTop: "64px",
+              position: "relative",
+              zIndex: 0,
             }}
           >
             <Routes>
