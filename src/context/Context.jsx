@@ -1,7 +1,6 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext } from "react";
 
 export const Context = createContext();
-import axios from "axios";
 function Provider({ children }) {
   const [collapsed, setCollapsed] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -18,7 +17,6 @@ function Provider({ children }) {
   const [sliderVisible, setSliderVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
-  
 
   return (
     <Context.Provider

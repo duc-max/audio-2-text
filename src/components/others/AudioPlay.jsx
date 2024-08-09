@@ -70,7 +70,6 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     };
   }, [setSliderVisible]);
 
-
   const togglePlay = () => {
     if (wavesurfer) {
       wavesurfer.playPause();
@@ -152,6 +151,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
           {sliderVisible && (
             <div className={style.volumeSliderContainer}>
               <Slider
+                vertical
                 min={0}
                 max={1}
                 step={0.01}

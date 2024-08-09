@@ -6,7 +6,8 @@
 /*
   1. Use a more-intuitive box-sizing model.
 */
-html, body {
+html,
+body {
   overflow-x: hidden; /* Prevent horizontal scrolling */
   width: 100%; /* Ensure full width */
   overflow-y: auto; /* Enable vertical scrolling when needed */
