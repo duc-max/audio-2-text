@@ -6,11 +6,11 @@ import { useContext } from "react";
 import { Context } from "../context/Context";
 import AudioPlayer from "./others/AudioPlay";
 import Converter from "./Converter";
-import Recorder from "./others/AudioRecorder";
+import { Container } from "react-bootstrap";
 const { Dragger } = Upload;
 const { Content } = Layout;
 const Input = () => {
-  let { uploadedFile, setUploadedFile, setData, data } = useContext(Context);
+  let { uploadedFile, setUploadedFile, setData } = useContext(Context);
 
   const props = {
     name: "file",
@@ -84,7 +84,7 @@ const Input = () => {
     setUploadedFile(null);
   };
   return (
-    <div className="container">
+    <Container>
       <Row gutter={[16, 16]} style={{ paddingTop: "40px", display: "flex" }}>
         <Col xs={12} md={12} xl={12} style={{ paddingTop: "40px" }}>
           <Content
@@ -169,18 +169,13 @@ const Input = () => {
                 )}
               </Col>
             </Row>
-            <Row>
-              <Col xs={24} md={24} xl={24}>
-                <Recorder />
-              </Col>
-            </Row>
           </Content>
         </Col>
         <Col xs={12} md={12} xl={12}>
           <Converter />
         </Col>
       </Row>
-    </div>
+    </Container>
   );
 };
 export default Input;

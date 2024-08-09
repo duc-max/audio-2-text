@@ -1,17 +1,21 @@
-const { Content } = Layout;
-import { Layout, theme } from "antd";
+import { Layout, theme, Popover, Table, Flex } from "antd";
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
+import { RiSpeakLine } from "react-icons/ri";
+
+import Detailed from "./others/Modal";
 import "./Common.css";
 
+const { Content } = Layout;
+
 const colors = {
-  Happiness: "#ffa940",
-  Sadness: "#8c8c8c",
-  Neutral: "#ad6800",
-  Anger: "#f5222d",
-  Fear: "#9254de",
-  Surprise: "#ffc53d",
+  vui: "#ffa940", // Happiness
+  buồn: "#8c8c8c", // Sadness
+  "bình thường": "#ad6800", // Neutral
+  giận: "#f5222d", // Anger
+  sợ: "#9254de", // Fear
+  "ngạc nhiên": "#ffc53d", // Surprise
 };
 
 function Converter() {
@@ -128,6 +132,9 @@ function Converter() {
     data,
   } = useContext(Context);
 
+  const { loading, setLoading, selectedDetail, percentage, setPercentage } =
+    useContext(Context);
+
   useEffect(() => {
     if (loading) {
       const loadApi = () => {
@@ -158,6 +165,24 @@ function Converter() {
     return colors[emotion] || "#000";
   };
 
+  const emotionColumns = [
+    {
+      title: "Cảm xúc",
+      dataIndex: "key",
+      key: "key",
+      render: (text) => (
+        <span style={{ color: getEmotionColor(text), fontSize: 16 }}>
+          {text}
+        </span>
+      ),
+    },
+    {
+      title: "Phần trăm",
+      dataIndex: "percent",
+      key: "percent",
+    },
+  ];
+
   return (
     <Content
       className="container"
@@ -167,7 +192,7 @@ function Converter() {
     >
       <div
         style={{
-          minHeight: 360,
+          minHeight: 500,
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
           padding: "0 24 24 24",
@@ -194,35 +219,53 @@ function Converter() {
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
                       avatar={
-                        <Avatar
-                          src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${item.id}`}
-                        />
+                        <Avatar src={`../assets/speaker${item.id}.png`} />
                       }
-                      title={
-                        <a
-                          onClick={() => {
-                            setOpen(!open);
-                            setSelectedDetail(item);
-                          }}
-                        >
-                          Person : {item.id}
-                        </a>
-                      }
+                      title={<span>Person: {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
-                      <span className="transcription">{item.text}</span>
-                      <span>
-                        {item.emotion.map((e, index) => (
-                          <p
-                            key={index}
-                            style={{ color: getEmotionColor(e.key) }}
-                          >
-                            {e.key.charAt(0).toUpperCase() + e.key.slice(1)}:{" "}
-                            {e.percent}%
-                            {index < item.emotion.length - 1 ? ", " : ""}
-                          </p>
-                        ))}
+                      <span
+                        style={{
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: 22,
+                        }}
+                      >
+                        <RiSpeakLine style={{ paddingRight: 2 }} />
+                        <span style={{ paddingLeft: "4px" }}>
+                          : {item.text}
+                        </span>
                       </span>
+                      <Popover
+                        content={
+                          <Table
+                            columns={emotionColumns}
+                            dataSource={item.emotion}
+                            pagination={false}
+                            size="small"
+                          />
+                        }
+                        title="Chi tiết"
+                        trigger="hover"
+                      >
+                        <span style={{ cursor: "pointer" }}>
+                          {item.emotion
+                            .sort((a, b) => b.percent - a.percent)
+                            .slice(0, 2)
+                            .map((e, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  color: getEmotionColor(e.key),
+                                  fontSize: 16,
+                                }}
+                              >
+                                {e.key}
+                                {index < 1 ? ", " : ""}
+                              </span>
+                            ))}
+                        </span>
+                      </Popover>
                     </div>
                   </Skeleton>
                 </List.Item>
@@ -234,4 +277,5 @@ function Converter() {
     </Content>
   );
 }
+
 export default Converter;

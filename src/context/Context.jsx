@@ -1,4 +1,4 @@
-import { useState, createContext, useEffect } from "react";
+import { useState, createContext } from "react";
 
 export const Context = createContext();
 function Provider({ children }) {
@@ -17,7 +17,6 @@ function Provider({ children }) {
   const [sliderVisible, setSliderVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
-  
 
   return (
     <Context.Provider
