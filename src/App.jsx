@@ -25,8 +25,6 @@ function App() {
             zIndex: 1,
           }}
         >
-          <Navbar style={{ zIndex: 2 }} />
-          <Carou style={{ zIndex: 1 }} />
           <Layout
             style={{
               background: colorBgContainer,

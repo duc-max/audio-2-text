@@ -53,8 +53,9 @@
 }
 
 .volumeSlider {
-  width: 150px;
+  height: 100px;
   position: absolute;
-  left: 40px;
+  left: 4px;
+  top: 100%;
   z-index: 1000;
 }

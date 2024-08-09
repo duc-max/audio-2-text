@@ -6,6 +6,27 @@
 /*
   1. Use a more-intuitive box-sizing model.
 */
+html,
+body {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  width: 100%; /* Ensure full width */
+  overflow-y: auto; /* Enable vertical scrolling when needed */
+  height: 100%; /* Ensure full height */
+  margin: 0; /* Remove default margins */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+div::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+div::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+div:hover::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 12px;
+}
 *,
 *::before,
 *::after {
