@@ -206,8 +206,15 @@ function Converter() {
               dataSource={data.object}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i} style={{ marginRight: 6 }}>
-                  <Skeleton loading={loading == true} active avatar paragraph>
+                <List.Item key={i} style={{ marginRight: 6 }} >
+                  <Skeleton
+                    loading={loading == true}
+                    active
+                    avatar
+                    paragraph
+                    style={{ height: "100%" }}
+                    className="p-8"
+                  >
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
                       avatar={
@@ -273,7 +280,6 @@ function Converter() {
             />
           </Col>
         </Row>
-        
       </div>
     </Content>
   );

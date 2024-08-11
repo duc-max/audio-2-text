@@ -1,26 +1,33 @@
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
-import { message, Upload, Divider, Button, Col, Row } from "antd";
-import { Layout, theme } from "antd";
-import { useContext } from "react";
+import { message, Upload, Divider, Button } from "antd";
+import { Layout } from "antd";
+import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
+import { useContext, useState } from "react";
 import { Context } from "../context/Context";
 import AudioPlayer from "./others/AudioPlay";
 import Converter from "./Converter";
-import { Container } from "react-bootstrap";
+import { Col, Container, Row } from "react-bootstrap";
+// import AppHeader from "./Header/Header";
+import Headertw from "./Header/Header-tw";
+import "./Common.css";
+import { ThemeContext } from "../context/ThemeContext";
+import Footer from "./Footer/Footer";
+import Footertw from "./Footer/Footer-tw";
 import fileValidator from "../funcs/fileValidator";
-import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
-
+import darkBackground from "../../public/assets/80499.jpg";
+import lightBackground from "../../public/assets/background.jpg";
 const { Dragger } = Upload;
 const { Content } = Layout;
 
 const Input = () => {
-  let { uploadedFile, setUploadedFile, setData, data } = useContext(Context);
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
+  const { isDarkMode } = useContext(ThemeContext);
+  const [isProcessAudio, setIsProcessAudio] = useState(false);
+  let { uploadedFile, setUploadedFile, setData } = useContext(Context);
   const clearFile = () => {
     setUploadedFile(null);
+    setIsProcessAudio(false);
   };
-
+  const backgroundImage = isDarkMode ? darkBackground : lightBackground;
   const props = {
     name: "file",
     action: "https://192.168.93.55:5001/api/FileUpload/upload",
@@ -113,13 +120,20 @@ const Input = () => {
     },
 
     onChange: async (info) => {
+      setUploadedFile({
+        fileName: info.file.name,
+        audioSrc: URL.createObjectURL(info.file.originFileObj),
+      });
       if (fileValidator(info.file) === false) {
         info.file.status = "error";
       } else {
         let { status } = info.file;
+
         if (status === "done") {
           message.success(`${info.file.name} file uploaded successfully.`);
+
           console.log("info.file: ", info.file?.response?.object);
+          setData(info.file?.response?.object);
         } else if (status === "error") {
           message.error(`${info.file.name} file upload failed.`);
         }
@@ -127,102 +141,167 @@ const Input = () => {
     },
   };
   return (
-    <Container>
-      <Row gutter={[16, 16]} style={{ paddingTop: "60px", display: "flex" }}>
-        <Col xs={12} md={12} xl={12} style={{ paddingTop: "100px" }}>
-          <Content
+    <Layout
+      style={{
+        minHeight: "100vh",
+        width: "100vw",
+        position: "relative",
+        zIndex: 1,
+      }}
+    >
+      <Layout
+        style={{
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
+          paddingTop: "64px",
+          position: "relative",
+          zIndex: 0,
+        }}
+      >
+        {/* <AppHeader /> */}
+        <Headertw />
+        <Container fluid>
+          <h1
             style={{
-              margin: "14px 16px 0",
-              height: "10vh",
-              background: colorBgContainer,
+              color: isDarkMode ? "#fff" : "#000",
             }}
+            className="text-center web-title"
           >
-            <Row justify="center">
-              <Col
-                xs={24}
-                md={24}
-                xl={24}
+            Chuyển Đổi Âm Thanh Thành Văn Bản
+          </h1>
+          <Row className="pt-5 d-flex justify-content-center">
+            <Col xs={12} sm={12} md={6} lg={6} className="mb-4">
+              <Content
                 style={{
-                  margin: "0px auto",
-                  minHeight: 360,
-                  background: colorBgContainer,
-                  borderRadius: borderRadiusLG,
-                  height: "50%",
-                  width: "90%",
+                  margin: "14px 16px 0",
+                  height: "100%",
                 }}
               >
-                {uploadedFile ? (
-                  <>
-                    <AudioPlayer
-                      fileName={uploadedFile.fileName}
-                      audioSrc={uploadedFile.audioSrc}
-                    />
-                    <div style={{ textAlign: "center", marginTop: "20px" }}>
-                      <Button
-                        onClick={clearFile}
-                        style={{ marginRight: "10px" }}
-                      >
-                        Clear
-                      </Button>
-                      <Button type="primary">Submit</Button>
-                    </div>
-                  </>
-                ) : (
-                  <Dragger {...props}>
-                    <p className="ant-upload-drag-icon">
-                      <InboxOutlined />
-                    </p>
-                    <p
-                      className="ant-upload-text"
-                      style={{ fontSize: "22px", position: "relative" }}
+                <Col
+                  style={{
+                    margin: "0px auto",
+                    minHeight: 360,
+                    borderRadius: 8,
+                    width: "100%",
+                    border: "1px dashed #d9d9d9",
+                    backgroundColor: isDarkMode && !uploadedFile ? "" : "#ffff",
+                    padding: 0,
+                  }}
+                >
+                  {uploadedFile ? (
+                    <>
+                      <AudioPlayer
+                        fileName={uploadedFile.fileName}
+                        audioSrc={uploadedFile.audioSrc}
+                      />
+                      <div style={{ textAlign: "center", marginTop: "20px" }}>
+                        <Button
+                          onClick={clearFile}
+                          style={{
+                            marginRight: "10px",
+                            color: isDarkMode ? "#000" : "inherit",
+                          }}
+                        >
+                          Clear
+                        </Button>
+                        <Button
+                          type="primary"
+                          onClick={() => {
+                            setIsProcessAudio(true);
+                          }}
+                        >
+                          Xử lý
+                        </Button>
+                      </div>
+                    </>
+                  ) : (
+                    <Dragger
+                      {...props}
+                      style={{ border: "none", background: "none" }}
                     >
-                      Drop audio file here
-                    </p>
-                    <Divider style={{ margin: "2px auto" }}>
-                      <p
-                        className="ant-upload-hint "
-                        style={{ fontSize: "22px", position: "relative" }}
-                      >
-                        or
+                      <p className="ant-upload-drag-icon">
+                        <InboxOutlined
+                          style={{
+                            color: isDarkMode ? "#f5f5f5" : "inherit",
+                          }}
+                          accept=".mp3"
+                        />
                       </p>
-                    </Divider>
-                    <p
-                      className="ant-upload-text"
-                      style={{ fontSize: "22px", position: "relative" }}
-                    >
-                      Click to upload
-                    </p>
-                    <Button
-                      icon={<UploadOutlined />}
-                      style={{ margin: "10px 0", position: "relative" }}
-                    >
-                      Click to Upload
-                    </Button>
-                    <p
-                      className="ant-upload-hint"
-                      style={{
-                        fontSize: "12px",
-                        margin: "10px 0",
-                        position: "relative",
-                      }}
-                    >
-                      {`Supported file extensions : ${props.accept} `}
-                    </p>
-                  </Dragger>
-                )}
+                      <p
+                        className="text-input"
+                        style={{
+                          color: isDarkMode ? "#f5f5f5" : "inherit",
+                        }}
+                      >
+                        Drop audio file here
+                      </p>
+                      <Divider
+                        style={{
+                          margin: "2px auto",
+                        }}
+                      >
+                        <p
+                          className="text-input"
+                          style={{
+                            color: isDarkMode ? "#f5f5f5" : "inherit",
+                          }}
+                        >
+                          or
+                        </p>
+                      </Divider>
+                      <p
+                        className="text-input"
+                        style={{
+                          color: isDarkMode ? "#f5f5f5" : "inherit",
+                        }}
+                      >
+                        Click to upload
+                      </p>
+                      <Button
+                        icon={<UploadOutlined />}
+                        style={{
+                          margin: "10px 0",
+                          position: "relative",
+                          color: isDarkMode ? "#000" : "inherit",
+                        }}
+                      >
+                        Click to Upload
+                      </Button>
+                      <p
+                        className="ant-upload-hint"
+                        style={{
+                          fontSize: "12px",
+                          margin: "10px 0",
+                          position: "relative",
+                          color: isDarkMode ? "#f5f5f5" : "inherit",
+                        }}
+                      >
+                        {`Supported file extensions : ${props.accept} `}
+                      </p>
+                    </Dragger>
+                  )}
+                </Col>
+              </Content>
+            </Col>
+            {isProcessAudio && (
+              <Col
+                xs={12}
+                sm={12}
+                md={isProcessAudio ? 6 : 12}
+                lg={isProcessAudio ? 6 : 12}
+                className="mb-4"
+              >
+                <Converter />
               </Col>
-            </Row>
-            {/* wait for development acceptance */}
-            {/* <Row justify={"center"}>
-                <AudioRecorderComponent />
-              </Row> */}
-          </Content>
-        </Col>
-        <Col xs={12} md={12} xl={12}>
-          <Converter />
-        </Col>
-      </Row>
-    </Container>
+            )}
+          </Row>
+        </Container>
+        {/* <Footertw /> */}
+        {/* <Footer /> */}
+      </Layout>
+    </Layout>
   );
 };
 

@@ -1,5 +1,8 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root {
-  max-width: 1280px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
 }
@@ -145,4 +148,8 @@ h6 {
 #root,
 #__next {
   isolation: isolate;
+}
+
+a{
+  text-decoration: none;
 }
