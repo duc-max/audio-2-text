@@ -1,92 +1,135 @@
 import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import { message, Upload, Divider, Button, Col, Row } from "antd";
 import { Layout, theme } from "antd";
-import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
 import { useContext } from "react";
 import { Context } from "../context/Context";
 import AudioPlayer from "./others/AudioPlay";
 import Converter from "./Converter";
 import { Container } from "react-bootstrap";
+import fileValidator from "../funcs/fileValidator";
+import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
+
 const { Dragger } = Upload;
 const { Content } = Layout;
+
 const Input = () => {
-  let { uploadedFile, setUploadedFile, setData } = useContext(Context);
+  let { uploadedFile, setUploadedFile, setData, data } = useContext(Context);
+  const {
+    token: { colorBgContainer, borderRadiusLG },
+  } = theme.useToken();
+  const clearFile = () => {
+    setUploadedFile(null);
+  };
 
   const props = {
     name: "file",
-    action: "https://192.168.93.41:5001/api/FileUpload/upload",
+    action: "https://192.168.93.55:5001/api/FileUpload/upload",
     multiple: false,
-    accept: ".mp3",
-    onChange(info) {
-      const { status } = info.file;
-      if (status !== "uploading") {
-        console.log(info);
-        let reader = new FileReader();
-        reader.onload = async (e) => {
-          const arrayBuffer = e.target.result;
+    method: "POST",
+    accept: "audio/*",
+    beforeUpload: async (file) => {
+      if (fileValidator(file) === false) {
+        file.status = "error";
+        message.error(
+          "Invalid file type or size. Please upload an audio file that is less than 7MB."
+        );
+      } else {
+        try {
+          // Read the audio file as an array buffer
+          const arrayBuffer = await file.arrayBuffer();
+
+          // Use the Web Audio API to decode the audio data and get the sample rate
           const audioContext = new (window.AudioContext ||
-            window.AudioContext)();
-          try {
-            const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-            const sampleRate = audioBuffer.sampleRate;
-            console.log(`Original sample rate: ${sampleRate} Hz`);
+            window.webkitAudioContext)();
+          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+          const inputSampleRate = audioBuffer.sampleRate;
 
-            // Convert sample rate to 16000 Hz
-            const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
-            const nChannels = audioBuffer.numberOfChannels;
-            const inputSampleRate = sampleRate;
-            const outputSampleRate = 16000;
+          // Resampling parameters
+          const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
+          const nChannels = audioBuffer.numberOfChannels;
+          const outputSampleRate = 16000;
 
-            const src = await create(
-              nChannels,
-              inputSampleRate,
-              outputSampleRate,
-              {
-                converterType: converterType,
-              }
-            );
+          // Create resampler
+          const src = await create(
+            nChannels,
+            inputSampleRate,
+            outputSampleRate,
+            {
+              converterType: converterType,
+            }
+          );
 
-            const inputData = audioBuffer.getChannelData(0); // Assuming mono audio
-            const resampledData = src.simple(inputData);
-            src.destroy(); // Clean up
-            setUploadedFile({
-              fileName: info.file.name,
-              audioSrc: URL.createObjectURL(info.file.originFileObj),
-            });
-            console.log(`Original data length: ${info.file.response.object}`);
-            console.log(`Resampled data length: ${resampledData.length}`);
-            console.log(`Resampled sample rate: ${outputSampleRate} Hz`);
-          } catch (error) {
-            console.error("Error decoding or resampling audio data:", error);
+          // Resample each channel
+          const resampledChannels = [];
+          for (let channel = 0; channel < nChannels; channel++) {
+            const audioData = audioBuffer.getChannelData(channel);
+            const resampledData = src.simple(audioData);
+            resampledChannels.push(resampledData);
           }
-        };
-        reader.readAsArrayBuffer(info.file.originFileObj);
+          src.destroy(); // Clean up
+
+          // Combine resampled data into a single array (if multi-channel)
+          let combinedResampledData;
+          if (nChannels === 1) {
+            combinedResampledData = resampledChannels[0];
+          } else {
+            combinedResampledData = new Float32Array(
+              resampledChannels[0].length * nChannels
+            );
+            for (let channel = 0; channel < nChannels; channel++) {
+              combinedResampledData.set(
+                resampledChannels[channel],
+                channel * resampledChannels[0].length
+              );
+            }
+          }
+
+          // Convert Float32Array to Int16Array for WAV format
+          const int16Data = new Int16Array(combinedResampledData.length);
+          for (let i = 0; i < combinedResampledData.length; i++) {
+            int16Data[i] =
+              Math.max(-1, Math.min(1, combinedResampledData[i])) * 0x7fff; // Convert to 16-bit PCM
+          }
+
+          // Create a new Blob from the resampled data
+          const resampledBlob = new Blob([int16Data.buffer], {
+            type: "audio/wav",
+          });
+
+          // Create a new File object from the resampled Blob
+          const resampledFile = new File([resampledBlob], file.name, {
+            type: "audio/wav",
+            lastModified: Date.now(),
+          });
+
+          // Replace the original file with the resampled file
+          return resampledFile;
+        } catch (error) {
+          console.error("Error during resampling:", error);
+          message.error(`Failed to resample audio file: ${error.message}`);
+          return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+        }
+      }
+    },
+
+    onChange: async (info) => {
+      if (fileValidator(info.file) === false) {
+        info.file.status = "error";
+      } else {
+        let { status } = info.file;
         if (status === "done") {
           message.success(`${info.file.name} file uploaded successfully.`);
           console.log("info.file: ", info.file?.response?.object);
-          setData(info.file?.response?.object);
-          console.log(data.object)
         } else if (status === "error") {
           message.error(`${info.file.name} file upload failed.`);
         }
       }
     },
-    onDrop(e) {
-      console.log("Dropped files", e.dataTransfer.files);
-    },
-  };
-
-  const {
-    token: { colorBgContainer, borderRadiusLG },
-  } = theme.useToken();
-
-  const clearFile = () => {
-    setUploadedFile(null);
   };
   return (
     <Container>
-      <Row gutter={[16, 16]} style={{ paddingTop: "40px", display: "flex" }}>
-        <Col xs={12} md={12} xl={12} style={{ paddingTop: "40px" }}>
+      <Row gutter={[16, 16]} style={{ paddingTop: "60px", display: "flex" }}>
+        <Col xs={12} md={12} xl={12} style={{ paddingTop: "100px" }}>
           <Content
             style={{
               margin: "14px 16px 0",
@@ -127,7 +170,7 @@ const Input = () => {
                 ) : (
                   <Dragger {...props}>
                     <p className="ant-upload-drag-icon">
-                      <InboxOutlined accept=".mp3" />
+                      <InboxOutlined />
                     </p>
                     <p
                       className="ant-upload-text"
@@ -169,6 +212,10 @@ const Input = () => {
                 )}
               </Col>
             </Row>
+            {/* wait for development acceptance */}
+            {/* <Row justify={"center"}>
+                <AudioRecorderComponent />
+              </Row> */}
           </Content>
         </Col>
         <Col xs={12} md={12} xl={12}>
@@ -178,4 +225,5 @@ const Input = () => {
     </Container>
   );
 };
+
 export default Input;

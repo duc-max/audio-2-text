@@ -1,10 +1,9 @@
-import { Layout, theme, Popover, Table, Flex } from "antd";
+import { Layout, theme, Popover, Table } from "antd";
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
 import { RiSpeakLine } from "react-icons/ri";
 
-import Detailed from "./others/Modal";
 import "./Common.css";
 
 const { Content } = Layout;
@@ -19,7 +18,7 @@ const colors = {
 };
 
 function Converter() {
-  const data2 = {
+  const data = {
     status: 0,
     statusCode: 200,
     object: [
@@ -28,27 +27,15 @@ function Converter() {
         text: " xin chào ",
         emotion: [
           {
-            key: " vui",
+            key: "vui",
             percent: 10,
           },
           {
-            key: " bình thường",
+            key: "bình thường",
             percent: 50,
           },
           {
-            key: " sợ",
-            percent: 40,
-          },
-          {
-            key: " vui",
-            percent: 10,
-          },
-          {
-            key: " bình thường",
-            percent: 50,
-          },
-          {
-            key: " sợ",
+            key: "sợ",
             percent: 40,
           },
         ],
@@ -58,57 +45,73 @@ function Converter() {
         text: " xin chào ",
         emotion: [
           {
-            key: " vui",
+            key: "vui",
             percent: 10,
           },
           {
-            key: " bình thường",
+            key: "bình thường",
             percent: 50,
           },
           {
-            key: " sợ",
-            percent: 40,
-          },
-          {
-            key: " vui",
-            percent: 10,
-          },
-          {
-            key: " bình thường",
-            percent: 50,
-          },
-          {
-            key: " sợ",
+            key: "sợ",
             percent: 40,
           },
         ],
       },
       {
-        id: "B",
-        text: " xin chào ",
+        id: "C",
+        text: " xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
         emotion: [
           {
-            key: " vui",
-            percent: 10,
+            key: "vui",
+            percent: 80,
           },
           {
-            key: " bình thường",
+            key: "bình thường",
             percent: 50,
           },
           {
-            key: " sợ",
+            key: "sợ",
             percent: 40,
           },
           {
-            key: " vui",
+            key: "giận",
+            percent: 60,
+          },
+        ],
+      },
+      {
+        id: "D",
+        text: " xin chào ",
+        emotion: [
+          {
+            key: "vui",
             percent: 10,
           },
           {
-            key: " bình thường",
+            key: "bình thường",
             percent: 50,
           },
           {
-            key: " sợ",
+            key: "sợ",
+            percent: 40,
+          },
+        ],
+      },
+      {
+        id: "A",
+        text: "xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
+        emotion: [
+          {
+            key: "vui",
+            percent: 10,
+          },
+          {
+            key: "bình thường",
+            percent: 50,
+          },
+          {
+            key: "sợ",
             percent: 40,
           },
         ],
@@ -121,18 +124,8 @@ function Converter() {
   const {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
-  const {
-    loading,
-    setLoading,
-    setOpen,
-    selectedDetail,
-    setSelectedDetail,
-    percentage,
-    setPercentage,
-    data,
-  } = useContext(Context);
 
-  const { loading, setLoading, selectedDetail, percentage, setPercentage } =
+  const { loading, setLoading, percentage, setPercentage } =
     useContext(Context);
 
   useEffect(() => {
@@ -154,7 +147,7 @@ function Converter() {
             clearInterval(intervalId);
             setLoading(false);
           }
-        }, 200); // Fixed interval of 1000 milliseconds (1 second)
+        }, 200);
       };
 
       loadApi();
@@ -185,7 +178,6 @@ function Converter() {
 
   return (
     <Content
-      className="container"
       style={{
         margin: "24px 16px 0",
       }}
@@ -200,7 +192,7 @@ function Converter() {
             ? {
                 overflowY: "scroll",
                 overflowX: "hidden",
-                height: "200px",
+                height: "180px",
               }
             : {}),
         }}
@@ -214,28 +206,36 @@ function Converter() {
               dataSource={data.object}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i}>
+                <List.Item key={i} style={{ marginRight: 6 }}>
                   <Skeleton loading={loading == true} active avatar paragraph>
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
                       avatar={
-                        <Avatar src={`../assets/speaker${item.id}.png`} />
+                        <Avatar
+                          src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${item.id}`}
+                        />
                       }
                       title={<span>Person: {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
-                      <span
+                      <div
+                        className="transcription"
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          fontSize: 22,
+                          fontSize: 18,
                         }}
                       >
-                        <RiSpeakLine style={{ paddingRight: 2 }} />
-                        <span style={{ paddingLeft: "4px" }}>
-                          : {item.text}
+                        <span
+                          style={{
+                            flexShrink: 0, // Prevent the icon from shrinking
+                            paddingRight: "8px",
+                          }}
+                        >
+                          <RiSpeakLine />
                         </span>
-                      </span>
+                        <span>{item.text}</span>
+                      </div>
                       <Popover
                         content={
                           <Table
@@ -273,6 +273,7 @@ function Converter() {
             />
           </Col>
         </Row>
+        
       </div>
     </Content>
   );

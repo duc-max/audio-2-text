@@ -17,10 +17,14 @@ function Provider({ children }) {
   const [sliderVisible, setSliderVisible] = useState(false);
   const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
+  const [validated, setValidated] = useState(false);
+  
 
   return (
     <Context.Provider
       value={{
+        validated,
+        setValidated,
         collapsed,
         setCollapsed,
         loading,
