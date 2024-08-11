@@ -39,7 +39,10 @@
 
 .audioPlayWrapper {
   display: flex;
+  flex-wrap: wrap;
   justify-content: space-between;
+  align-items: center;
+  gap: 10px;
 }
 
 .volumeControlWrapper {
@@ -49,13 +52,36 @@
 }
 
 .volumeSliderContainer {
-  display: block;
+  position: absolute;
+  top: 100%;
+  left: 19%;
+  transform: translateX(-50%);
 }
 
 .volumeSlider {
-  height: 100px;
-  position: absolute;
-  left: 4px;
-  top: 100%;
-  z-index: 1000;
+  height: 80px;
+}
+
+@media (max-width: 992px) {
+  .volumeSliderContainer {
+    position: absolute;
+    top: 20px;
+    left: 19px;
+    transform: translateX(-50%);
+  }
+}
+
+@media (max-width: 768px) {
+  .audioPlayWrapper {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .volumeControlWrapper {
+    justify-content: center;
+    margin-bottom: 10px;
+  }
+  .btnVolume {
+    display: none;
+  }
 }

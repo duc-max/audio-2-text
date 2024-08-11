@@ -1,3 +1,8 @@
+.web-title {
+  font-size: 20px;
+  margin: 20px 0;
+}
+
 .list-audio-wrapper {
   display: flex;
   justify-content: space-between;
@@ -5,8 +10,29 @@
 
 .list-audio-wrapper .transcription {
   display: block;
-  width: 400px;
+  width: 80%;
   overflow-wrap: break-word;
   word-wrap: normal;
   white-space: normal;
+}
+
+.text-input {
+  font-size: 22px;
+  position: relative;
+}
+
+@media (max-width: 575.98px) {
+  .pt-5 {
+    padding-top: 20px !important;
+  }
+}
+
+@media (max-width: 767.98px) {
+  .d-flex {
+    flex-direction: column !important;
+  }
+
+  .pt-5 {
+    padding-top: 20px !important;
+  }
 }
