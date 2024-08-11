@@ -141,6 +141,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
           <Button
             onClick={handleVolumeIconClick}
             style={{ marginRight: "10px" }}
+            className={style.btnVolume}
           >
             {muted || volume === 0 ? (
               <IoVolumeMuteOutline />

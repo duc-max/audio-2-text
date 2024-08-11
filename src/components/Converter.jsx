@@ -1,11 +1,12 @@
-import { Layout, theme, Popover, Table, Flex } from "antd";
+import { Layout, theme, Popover, Table } from "antd";
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
-import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
+import { Avatar, List, Skeleton, Progress } from "antd";
 import { RiSpeakLine } from "react-icons/ri";
 
 import Detailed from "./others/Modal";
 import "./Common.css";
+import { Col, Row } from "react-bootstrap";
 
 const { Content } = Layout;
 
@@ -61,7 +62,7 @@ function Converter() {
       },
       {
         id: "C",
-        text: " xin chào ",
+        text: " xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
         emotion: [
           {
             key: "vui",
@@ -101,7 +102,7 @@ function Converter() {
       },
       {
         id: "A",
-        text: " xin chào ",
+        text: "xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha hsada shdashdasd sahdhasdhashd asd ashdedhasd hdas",
         emotion: [
           {
             key: "vui",
@@ -123,7 +124,7 @@ function Converter() {
   };
 
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { borderRadiusLG },
   } = theme.useToken();
 
   const { loading, setLoading, selectedDetail, percentage, setPercentage } =
@@ -185,29 +186,29 @@ function Converter() {
     >
       <div
         style={{
-          minHeight: 500,
-          background: colorBgContainer,
+          maxHeight: 500,
+          background: "#f2f4f5",
           borderRadius: borderRadiusLG,
           padding: "0 24 24 24",
           ...(loading == false
             ? {
                 overflowY: "scroll",
                 overflowX: "hidden",
-                height: "200px",
+                maxHeight: "500px",
               }
             : {}),
         }}
       >
         {loading ? <Progress percent={percentage} /> : ""}
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={24}>
+          <Col xs={12} sm={12} md={12}>
             <List
               itemLayout="vertical"
               size="default"
               dataSource={data.object}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i}>
+                <List.Item key={i} style={{ marginRight: 12, marginLeft: 12 }}>
                   <Skeleton loading={loading == true} active avatar paragraph>
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
@@ -217,18 +218,24 @@ function Converter() {
                       title={<span>Person: {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
-                      <span
+                      <div
+                        className="transcription"
                         style={{
                           display: "flex",
                           alignItems: "center",
-                          fontSize: 22,
+                          fontSize: 18,
                         }}
                       >
-                        <RiSpeakLine style={{ paddingRight: 2 }} />
-                        <span style={{ paddingLeft: "4px" }}>
-                          : {item.text}
+                        <span
+                          style={{
+                            flexShrink: 0, // Prevent the icon from shrinking
+                            paddingRight: "8px",
+                          }}
+                        >
+                          <RiSpeakLine />
                         </span>
-                      </span>
+                        <span>{item.text}</span>
+                      </div>
                       <Popover
                         content={
                           <Table
