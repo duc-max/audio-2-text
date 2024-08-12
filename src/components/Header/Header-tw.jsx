@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useContext } from "react";
 import {
   Dialog,
   DialogPanel,
@@ -27,6 +27,9 @@ import {
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import "./Header.css";
+import { ThemeContext } from "../../context/ThemeContext";
+import { Switch } from "antd";
+
 const products = [
   {
     name: "Analytics",
@@ -66,18 +69,18 @@ const callsToAction = [
 
 export default function Headertw() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-
+  const { isDarkMode, handleThemeChange } = useContext(ThemeContext);
   return (
-    <header className="bg-white header-container">
+    <header
+      className=" header-container py-1 border-b border-orange-500 rounded"
+      style={{ backgroundColor: isDarkMode ? "#1f1f1f" : "#fff" }}
+    >
       <nav
         aria-label="Global"
-        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8"
+        className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8 "
       >
         <div className="flex lg:flex-1">
-          <a
-            href="#"
-            className="hover:text-[rgb(239,91,30)] -m-1.5 p-1.5 no-underline"
-          >
+          <a href="#" className=" -m-1.5 p-1.5 no-underline">
             <span className="sr-only">BKAV</span>
             <img
               alt=""
@@ -100,11 +103,19 @@ export default function Headertw() {
           <a
             href="#"
             className="hover:text-[rgb(239,91,30)]  no-underline text-sm font-semibold leading-6 text-gray-900"
+            style={{
+              color: !isDarkMode ? "#1f1f1f" : "#fff",
+            }}
           >
             Giới thiệu
           </a>
           <Popover className="relative">
-            <PopoverButton className="flex items-center gap-x-1 text-sm font-semibold leading-6 text-gray-900">
+            <PopoverButton
+              className="flex items-center gap-x-1 text-sm font-semibold leading-6 "
+              style={{
+                color: !isDarkMode ? "#1f1f1f" : "#fff",
+              }}
+            >
               Sản phẩm khác
               <ChevronDownIcon
                 aria-hidden="true"
@@ -150,7 +161,10 @@ export default function Headertw() {
                   >
                     <item.icon
                       aria-hidden="true"
-                      className=" hover:text-[rgb(239,91,30)] h-5 w-5 flex-none text-gray-400"
+                      className=" hover:text-[rgb(239,91,30)] h-5 w-5 flex-none "
+                      style={{
+                        color: !isDarkMode ? "#1f1f1f" : "#fff",
+                      }}
                     />
                     {item.name}
                   </a>
@@ -161,17 +175,20 @@ export default function Headertw() {
           <a
             href="#"
             className="hover:text-[rgb(239,91,30)] no-underline text-sm font-semibold leading-6 text-gray-900"
+            style={{
+              color: !isDarkMode ? "#1f1f1f" : "#fff",
+            }}
           >
             Bộ chuyển đổi
           </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          {/* <a
-            href="#"
-            className="hover:text-[rgb(239,91,30)] no-underline text-sm font-semibold leading-6 text-gray-900"
-          >
-            Log in <span aria-hidden="true">&rarr;</span>
-          </a> */}
+          <Switch
+            checkedChildren="Tối"
+            unCheckedChildren="Sáng"
+            onChange={handleThemeChange}
+            checked={isDarkMode}
+          />
         </div>
       </nav>
       <Dialog
@@ -180,7 +197,12 @@ export default function Headertw() {
         className="lg:hidden header-menu--wrapper"
       >
         <div className="fixed inset-0 z-10" />
-        <DialogPanel className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto bg-white px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10">
+        <DialogPanel
+          className="fixed inset-y-0 right-0 z-10 w-full overflow-y-auto  px-6 py-6 sm:max-w-sm sm:ring-1 sm:ring-gray-900/10"
+          style={{
+            backgroundColor: isDarkMode ? "#141414" : "#fff",
+          }}
+        >
           <div className="flex items-center justify-between">
             <a
               href="#"
@@ -207,12 +229,20 @@ export default function Headertw() {
               <div className="space-y-2 py-6">
                 <a
                   href="#"
-                  className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7  "
+                  style={{
+                    color: !isDarkMode ? "#1f1f1f" : "#fff",
+                  }}
                 >
                   Giới thiệu
                 </a>
                 <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton className="group flex w-full block rounded-lg px-3 items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50">
+                  <DisclosureButton
+                    className="group flex w-full block rounded-lg px-3 items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 "
+                    style={{
+                      color: !isDarkMode ? "#1f1f1f" : "#fff",
+                    }}
+                  >
                     Sản phẩm khác
                     <ChevronDownIcon
                       aria-hidden="true"
@@ -225,7 +255,10 @@ export default function Headertw() {
                         key={item.name}
                         as="a"
                         href={item.href}
-                        className="hover:text-[rgb(239,91,30)] no-underline block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                        className="hover:text-[rgb(239,91,30)] no-underline block rounded-lg py-2 pl-6 pr-3 text-sm font-semibold leading-7"
+                        style={{
+                          color: !isDarkMode ? "#1f1f1f" : "#fff",
+                        }}
                       >
                         {item.name}
                       </DisclosureButton>
@@ -234,18 +267,21 @@ export default function Headertw() {
                 </Disclosure>
                 <a
                   href="#"
-                  className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
+                  className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7  "
+                  style={{
+                    color: !isDarkMode ? "#1f1f1f" : "#fff",
+                  }}
                 >
                   Bộ chuyển đổi
                 </a>
               </div>
               <div className="py-6">
-                {/* <a
-                  href="#"
-                  className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
-                >
-                  Log in
-                </a> */}
+                <Switch
+                  checkedChildren="Tối"
+                  unCheckedChildren="Sáng"
+                  onChange={handleThemeChange}
+                  checked={isDarkMode}
+                />
               </div>
             </div>
           </div>

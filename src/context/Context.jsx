@@ -18,7 +18,6 @@ function Provider({ children }) {
   const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
   const [validated, setValidated] = useState(false);
-  
 
   return (
     <Context.Provider

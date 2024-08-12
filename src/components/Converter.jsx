@@ -9,22 +9,21 @@ import "./Common.css";
 const { Content } = Layout;
 
 const colors = {
-  vui: "#ffa940", // Happiness
-  buồn: "#8c8c8c", // Sadness
-  "bình thường": "#ad6800", // Neutral
-  giận: "#f5222d", // Anger
-  sợ: "#9254de", // Fear
-  "ngạc nhiên": "#ffc53d", // Surprise
+  Happy: "#ffa940",
+  Sad: "#8c8c8c",
+  Neutral: "#ad6800",
+  Angry: "#f5222d",
+  Anxiety: "#ffc53d",
 };
 
 function Converter() {
-  const data = {
+  const data2 = {
     status: 0,
     statusCode: 200,
     object: [
       {
-        id: "A",
-        text: " xin chào ",
+        id: "Invalid",
+        text: "Invalid",
         emotion: [
           {
             key: "vui",
@@ -41,8 +40,8 @@ function Converter() {
         ],
       },
       {
-        id: "B",
-        text: " xin chào ",
+        id: "Invalid",
+        text: "Invalid",
         emotion: [
           {
             key: "vui",
@@ -59,8 +58,8 @@ function Converter() {
         ],
       },
       {
-        id: "C",
-        text: " xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
+        id: "Invalid",
+        text: "Invalid",
         emotion: [
           {
             key: "vui",
@@ -80,54 +79,18 @@ function Converter() {
           },
         ],
       },
-      {
-        id: "D",
-        text: " xin chào ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
-      {
-        id: "A",
-        text: "xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
     ],
     isOk: true,
     isError: false,
   };
 
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { borderRadiusLG },
   } = theme.useToken();
 
-  const { loading, setLoading, percentage, setPercentage } =
+  const { loading, setLoading, percentage, setPercentage, data } =
     useContext(Context);
-
+  console.log(data);
   useEffect(() => {
     if (loading) {
       const loadApi = () => {
@@ -158,14 +121,31 @@ function Converter() {
     return colors[emotion] || "#000";
   };
 
+  const getEmotionName = (emotion) => {
+    switch (emotion) {
+      case "Happy":
+        return "Vui vẻ";
+      case "Sad":
+        return "Buồn";
+      case "Angry":
+        return "Giận dữ";
+      case "Neutral":
+        return "Bình thường";
+      case "Anxiety":
+        return "Lo lắng";
+      default:
+        return "";
+    }
+  };
+
   const emotionColumns = [
     {
       title: "Cảm xúc",
       dataIndex: "key",
       key: "key",
       render: (text) => (
-        <span style={{ color: getEmotionColor(text), fontSize: 16 }}>
-          {text}
+        <span style={{ color: getEmotionColor(text.trim()), fontSize: 16 }}>
+          {getEmotionName(text.trim())}
         </span>
       ),
     },
@@ -177,16 +157,12 @@ function Converter() {
   ];
 
   return (
-    <Content
-      style={{
-        margin: "24px 16px 0",
-      }}
-    >
+    <Content>
       <div
         style={{
           minHeight: 500,
-          background: colorBgContainer,
           borderRadius: borderRadiusLG,
+          background: "#f2f4f5",
           padding: "0 24 24 24",
           ...(loading == false
             ? {
@@ -203,10 +179,10 @@ function Converter() {
             <List
               itemLayout="vertical"
               size="default"
-              dataSource={data.object}
+              dataSource={data ? data : data2}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i} style={{ marginRight: 6 }} >
+                <List.Item key={i} style={{ marginRight: 6, paddingLeft: 6 }}>
                   <Skeleton
                     loading={loading == true}
                     active
@@ -217,11 +193,7 @@ function Converter() {
                   >
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
-                      avatar={
-                        <Avatar
-                          src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${item.id}`}
-                        />
-                      }
+                      avatar={<Avatar src={`../assets/${item.id}.png`} />}
                       title={<span>Person: {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
@@ -235,7 +207,7 @@ function Converter() {
                       >
                         <span
                           style={{
-                            flexShrink: 0, // Prevent the icon from shrinking
+                            flexShrink: 0,
                             paddingRight: "8px",
                           }}
                         >
@@ -256,21 +228,23 @@ function Converter() {
                         trigger="hover"
                       >
                         <span style={{ cursor: "pointer" }}>
-                          {item.emotion
-                            .sort((a, b) => b.percent - a.percent)
-                            .slice(0, 2)
-                            .map((e, index) => (
-                              <span
-                                key={index}
-                                style={{
-                                  color: getEmotionColor(e.key),
-                                  fontSize: 16,
-                                }}
-                              >
-                                {e.key}
-                                {index < 1 ? ", " : ""}
-                              </span>
-                            ))}
+                          {item
+                            ? item?.emotion
+                                .sort((a, b) => b.percent - a.percent)
+                                .slice(0, 2)
+                                .map((e, index) => (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: getEmotionColor(e.key),
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    {e.key}
+                                    {index < 1 ? ", " : ""}
+                                  </span>
+                                ))
+                            : "Không có dữ liệu"}
                         </span>
                       </Popover>
                     </div>
