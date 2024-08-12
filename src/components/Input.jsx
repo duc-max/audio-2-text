@@ -36,7 +36,7 @@ const Input = () => {
     setIsProcessAudio(false);
   };
   const uploadRequest = {};
-  const backgroundImage = isDarkMode ? darkBackground : lightBackground;
+  const backgroundImage = isDarkMode ? "" : lightBackground;
   const props = {
     name: "file",
     action: "https://192.168.93.55:5001/api/FileUpload/upload",
@@ -134,15 +134,15 @@ const Input = () => {
         info.file.status = "error";
       } else {
         let { status } = info.file;
-        if (status === "done") {
+        if (status != "done") {
+          setUploadedFile({
+            fileName: info.file.name,
+            audioSrc: URL.createObjectURL(info.file.originFileObj),
+          });
+        } else if (status === "done") {
           console.log("info.file: ", info.file);
           message.success(`${info.file.name} file uploaded successfully.`);
-          setTimeout(() => {
-            setUploadedFile({
-              fileName: info.file.name,
-              audioSrc: URL.createObjectURL(info.file.originFileObj),
-            });
-          }, 1000);
+          setTimeout(() => {}, 1000);
           console.log("info.file: ", info.file?.response?.object);
           setData(info.file?.response?.object);
           console.log(data);
@@ -171,10 +171,10 @@ const Input = () => {
     >
       <Layout
         style={{
-          // backgroundImage: `url(${backgroundImage})`,
-          // backgroundSize: "cover",
-          // backgroundRepeat: "no-repeat",
-          // backgroundAttachment: "fixed",
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
           paddingTop: "64px",
           position: "relative",
@@ -258,7 +258,7 @@ const Input = () => {
                           color: isDarkMode ? "#f5f5f5" : "inherit",
                         }}
                       >
-                        Drop audio file here
+                        Thả tệp âm thanh vào đây
                       </Text>
                       <Divider
                         style={{
@@ -272,7 +272,7 @@ const Input = () => {
                             color: isDarkMode ? "#f5f5f5" : "inherit",
                           }}
                         >
-                          or
+                          hoặc
                         </p>
                       </Divider>
                       <Text
@@ -281,7 +281,7 @@ const Input = () => {
                           color: isDarkMode ? "#f5f5f5" : "inherit",
                         }}
                       >
-                        Click to upload
+                        Thả tệp âm thanh vào đây
                       </Text>
                       <Button
                         icon={<UploadOutlined />}
@@ -291,7 +291,7 @@ const Input = () => {
                           color: isDarkMode ? "#000" : "inherit",
                         }}
                       >
-                        Click to Upload
+                        Chọn tệp
                       </Button>
                       <Text
                         className="ant-upload-hint d-block"
@@ -302,7 +302,7 @@ const Input = () => {
                           color: isDarkMode ? "#f5f5f5" : "inherit",
                         }}
                       >
-                        {`Supported file extensions : ${props.accept} `}
+                        *Hỗ trợ tất cả các tệp âm thanh
                       </Text>
                     </Dragger>
                   )}

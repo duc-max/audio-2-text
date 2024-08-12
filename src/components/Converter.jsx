@@ -137,7 +137,6 @@ function Converter() {
         return "";
     }
   };
-
   const emotionColumns = [
     {
       title: "Cảm xúc",
@@ -179,7 +178,7 @@ function Converter() {
             <List
               itemLayout="vertical"
               size="default"
-              dataSource={data ? data : data2}
+              dataSource={data.length == 0 ? data2.object : data}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
                 <List.Item key={i} style={{ marginRight: 6, paddingLeft: 6 }}>
