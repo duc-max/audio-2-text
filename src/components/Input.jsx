@@ -21,7 +21,7 @@ import { ThemeContext } from "../context/ThemeContext";
 // import Footer from "./Footer/Footer";
 // import Footertw from "./Footer/Footer-tw";
 import fileValidator from "../funcs/fileValidator";
-import darkBackground from "../../public/assets/80499.jpg";
+import darkBackground from "../../public/assets/abstract-black-wave-line-contour-background-orange-free-vector.jpg";
 import lightBackground from "../../public/assets/pattern-randomized.png";
 const { Title, Text } = Typography;
 const { Dragger } = Upload;
@@ -30,13 +30,14 @@ const { Content } = Layout;
 const Input = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const [isProcessAudio, setIsProcessAudio] = useState(false);
-  let { uploadedFile, setUploadedFile, setData, data } = useContext(Context);
+  let { uploadedFile, setUploadedFile, setData, data, setUpload } =
+    useContext(Context);
   const clearFile = () => {
     setUploadedFile(null);
     setIsProcessAudio(false);
   };
   const uploadRequest = {};
-  const backgroundImage = isDarkMode ? "" : lightBackground;
+  const backgroundImage = isDarkMode ? darkBackground  : lightBackground;
   const props = {
     name: "file",
     action: "https://192.168.93.55:5001/api/FileUpload/upload",
@@ -144,6 +145,7 @@ const Input = () => {
           message.success(`${info.file.name} file uploaded successfully.`);
           setTimeout(() => {}, 1000);
           console.log("info.file: ", info.file?.response?.object);
+          setUpload(true);
           setData(info.file?.response?.object);
           console.log(data);
         } else if (status === "error") {
@@ -203,13 +205,14 @@ const Input = () => {
               >
                 <Col
                   className="border-orange-500 border-dashed border-2 p-4"
+                  
                   style={{
                     margin: "0px auto",
                     minHeight: 360,
                     borderRadius: 8,
                     width: "100%",
 
-                    backgroundColor: isDarkMode && !uploadedFile ? "" : "#ffff",
+                    backgroundColor: isDarkMode && !uploadedFile ? "#1f1f1f" : "#ffff",
                     padding: 0,
                   }}
                 >
@@ -241,7 +244,7 @@ const Input = () => {
                     </>
                   ) : (
                     <Dragger
-                      showUploadList={false}
+                      showUploadList={true}
                       {...props}
                       style={{ border: "none", background: "none" }}
                     >

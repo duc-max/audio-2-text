@@ -18,7 +18,7 @@ function Provider({ children }) {
   const [percentage, setPercentage] = useState(0);
   const [data, setData] = useState([]);
   const [validated, setValidated] = useState(false);
-
+  const [upload, setUpload] = useState(false);
   return (
     <Context.Provider
       value={{
@@ -54,6 +54,8 @@ function Provider({ children }) {
         setPercentage,
         setData,
         data,
+        upload,
+        setUpload,
       }}
     >
       {children}
