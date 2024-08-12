@@ -21,7 +21,7 @@ const Carou = () => {
         icon={collapsed ? <MenuUnfoldOutlined /> : <MenuFoldOutlined />}
         onClick={() => setCollapsed(!collapsed)}
         style={{
-          fontSize: "16px",
+          fontSize: "1rem",
           width: 64,
           height: 64,
         }}

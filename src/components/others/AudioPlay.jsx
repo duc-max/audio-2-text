@@ -27,6 +27,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     setPlaybackRate,
     sliderVisible,
     setSliderVisible,
+    isDarkmode,
   } = useContext(Context);
   const [wavesurfer, setWavesurfer] = useState(null);
   const volumeControlRef = useRef(null);
@@ -122,13 +123,14 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     <div
       style={{
         width: "100%",
-        padding: "20px 20px 0 20px",
+        padding: "1.25rem 1.25rem 0 1.25rem",
         textAlign: "center",
+        backgroundColor: isDarkmode ? "#1f1f1f" : "#ffff",
       }}
     >
       <WavesurferPlayer
         height={100}
-        waveColor=" #6666ff"
+        waveColor={isDarkmode ? "#ef5b1e" : "#6666ff"}
         url={audioSrc}
         onReady={onReady}
         onPlay={() => setPlaying(true)}
@@ -137,12 +139,15 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
 
       <Title level={4}>{fileName}</Title>
 
-      <div style={{ marginBottom: "10px" }}>
+      <div style={{ marginBottom: "0.625rem" }}>
         {new Date(currentTime * 1000).toISOString().substr(11, 8)} /{" "}
         {new Date(duration * 1000).toISOString().substr(11, 8)}
       </div>
 
-      <div className={style.audioPlayWrapper} style={{ marginBottom: "10px" }}>
+      <div
+        className={style.audioPlayWrapper}
+        style={{ marginBottom: "0.625rem" }}
+      >
         <div
           className={style.volumeControlWrapper}
           style={{ marginBottom: "0px" }}
@@ -150,7 +155,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
         >
           <Button
             onClick={handleVolumeIconClick}
-            style={{ marginRight: "10px" }}
+            style={{ marginRight: "0.625rem" }}
             className={style.btnVolume}
           >
             {muted || volume === 0 ? (
@@ -185,18 +190,18 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
           </Select> */}
         </div>
         <div className="audioController">
-          <Button onClick={skipBackward} style={{ marginRight: "10px" }}>
+          <Button onClick={skipBackward} style={{ marginRight: "0.625rem" }}>
             <IoMdSkipBackward />
           </Button>
-          <Button onClick={togglePlay} style={{ marginRight: "10px" }}>
+          <Button onClick={togglePlay} style={{ marginRight: "0.625rem" }}>
             {playing ? <CiPause1 /> : <CiPlay1 />}
           </Button>
-          <Button onClick={skipForward} style={{ marginRight: "10px" }}>
+          <Button onClick={skipForward} style={{ marginRight: "0.625rem" }}>
             <IoMdSkipForward />
           </Button>
         </div>
         <div>
-          <Button onClick={resetAudio} style={{ marginRight: "10px" }}>
+          <Button onClick={resetAudio} style={{ marginRight: "0.625rem" }}>
             <BiReset />
           </Button>
         </div>

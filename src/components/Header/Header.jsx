@@ -1,12 +1,11 @@
 import { Layout, Switch } from "antd";
 import { useContext } from "react";
 import "./Header.css";
-import { ThemeContext } from "../../context/ThemeContext";
-
+import { Context } from "../../context/Context";
 const { Header } = Layout;
 
 const AppHeader = () => {
-  const { isDarkMode, handleThemeChange } = useContext(ThemeContext);
+  const { isDarkMode, handleThemeChange } = useContext(Context);
 
   return (
     <Header

@@ -1,7 +1,7 @@
 import { Layout, theme, Popover, Table } from "antd";
-import { useContext, useEffect } from "react";
+import { useContext } from "react";
 import { Context } from "../context/Context";
-import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
+import { Avatar, List, Skeleton, Row, Col } from "antd";
 import { RiSpeakLine } from "react-icons/ri";
 
 import "./Common.css";
@@ -157,7 +157,7 @@ function Converter() {
                     className="p-8"
                   >
                     <List.Item.Meta
-                      style={{ marginBottom: "4px" }}
+                      style={{ marginBottom: "0.25rem" }}
                       avatar={<Avatar src={`../assets/${item.id}.png`} />}
                       title={<span>Person: {item.id}</span>}
                     />
@@ -173,7 +173,7 @@ function Converter() {
                         <span
                           style={{
                             flexShrink: 0,
-                            paddingRight: "8px",
+                            paddingRight: "0.5rem",
                           }}
                         >
                           <RiSpeakLine />

@@ -14,7 +14,7 @@ import { Link } from "react-router-dom";
 function Navbar() {
   const { collapsed } = useContext(Context);
   const menuItemStyle = {
-    margin: "20px auto",
+    margin: "1.25rem auto",
   };
   return (
     <Sider className="container"
@@ -29,17 +29,17 @@ function Navbar() {
         theme="light"
         mode="inline"
         defaultSelectedKeys={["1"]}
-        style={{ height: "100%", padding: "20px 0", paddingTop: "240px" }}
+        style={{ height: "100%", padding: "1.25rem 0", paddingTop: "15rem" }}
       >
-        <Divider solid style={{ margin: "10px 0" }} />
+        <Divider solid style={{ margin: "0.625rem 0" }} />
         <Menu.Item key="1" icon={<UserOutlined />} style={menuItemStyle}>
           <Link to="/">Giới thiệu </Link>
         </Menu.Item>
-        <Divider solid style={{ margin: "10px 0" }} />
+        <Divider solid style={{ margin: "0.625rem 0" }} />
         <Menu.Item key="2" icon={<UploadOutlined />} style={menuItemStyle}>
           <Link to="/upload">Tải lên</Link>
         </Menu.Item>
-        <Divider solid style={{ margin: "10px 0" }} />
+        <Divider solid style={{ margin: "0.625rem 0" }} />
       </Menu>
     </Sider>
   );

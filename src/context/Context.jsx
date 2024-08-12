@@ -19,10 +19,26 @@ function Provider({ children }) {
   const [data, setData] = useState([]);
   const [validated, setValidated] = useState(false);
   const [upload, setUpload] = useState(false);
+  const [isProcessAudio, setIsProcessAudio] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(false);
+
+  const handleThemeChange = (checked) => {
+    setIsDarkMode(checked);
+  };
+  const clearFile = () => {
+    setUploadedFile(null);
+    setIsProcessAudio(false);
+  };
   return (
     <Context.Provider
       value={{
+        isProcessAudio,
+        setIsProcessAudio,
+        clearFile,
         validated,
+        isDarkMode,
+        setIsDarkMode,
+        handleThemeChange,
         setValidated,
         collapsed,
         setCollapsed,

@@ -5,13 +5,13 @@ import { message } from "antd"; // Assuming you're using antd for messages
 import axios from "axios";
 
 const Recorder = () => {
-  const { setUploadedFile, setData } = useContext(Context);
-  const addAudioElement = (blob) => {
-    const url = URL.createObjectURL(blob);
-    setData()
-    audio.src = url;
-    audio.controls = true;
-  };
+  // const { setUploadedFile, setData } = useContext(Context);
+  // const addAudioElement = (blob) => {
+  //   const url = URL.createObjectURL(blob);
+  //   setData()
+  //   audio.src = url;
+  //   audio.controls = true;
+  // };
 
   return (
     <AudioRecorder

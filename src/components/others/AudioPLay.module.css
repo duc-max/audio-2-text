@@ -3,14 +3,14 @@
   justify-content: center;
   align-items: center;
   width: 100%;
-  min-height: 400px;
+  min-height: 25rem;
   background-color: #f9fafb;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.2);
   cursor: pointer;
 }
 .uploadWrapper:hover {
   opacity: 0.9;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  box-shadow: 0 0.25rem 0.5rem rgba(0, 0, 0, 0.1);
 }
 
 .uploadInputWrapper {
@@ -20,21 +20,21 @@
 }
 
 .uploadIcon {
-  font-size: 50px;
+  font-size: 3.125rem;
   color: #fa8c16;
-  margin-bottom: 12px;
+  margin-bottom: 0.75rem;
 }
 
 .uploadPara {
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 500;
 }
 
 .listAudioWrapper {
   width: 100%;
-  min-height: 400px;
+  min-height: 25rem;
   background-color: #f9fafb;
-  box-shadow: 0 0 4px rgba(0, 0, 0, 0.2);
+  box-shadow: 0 0 0.25rem rgba(0, 0, 0, 0.2);
 }
 
 .audioPlayWrapper {
@@ -42,7 +42,7 @@
   flex-wrap: wrap;
   justify-content: space-between;
   align-items: center;
-  gap: 10px;
+  gap: 0.625rem;
 }
 
 .volumeControlWrapper {
@@ -59,18 +59,18 @@
 }
 
 .volumeSlider {
-  height: 80px;
+  height: 5rem;
 }
 @media screen and (min-width: 1200px) {
   .audioController {
-    margin-right: 50px;
+    margin-right: 3.125rem;
   }
 }
 @media (max-width: 992px) {
   .volumeSliderContainer {
     position: absolute;
-    top: 20px;
-    left: 19px;
+    top: 1.25rem;
+    left: 1.188rem;
     transform: translateX(-50%);
   }
   .audioController {
@@ -86,7 +86,7 @@
 
   .volumeControlWrapper {
     justify-content: center;
-    margin-bottom: 10px;
+    margin-bottom: 0.625rem;
   }
   .btnVolume {
     display: none;
