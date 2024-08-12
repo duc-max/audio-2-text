@@ -12,14 +12,14 @@ function ProductOV() {
   return (
     <Content
       style={{
-        margin: "24px 16px 0",
+        margin: "1.5rem 1rem 0",
         overflowY: "scroll",
       }}
     >
       <div
         style={{
-          padding: 24,
-          minHeight: 360,
+          padding: "1.5rem",
+          minHeight: "22.5rem",
           background: colorBgContainer,
           borderRadius: borderRadiusLG,
         }}

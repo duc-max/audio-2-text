@@ -14,31 +14,31 @@
   position: relative;
   margin-left: auto;
   margin-right: auto;
-  padding-right: 15px;
-  padding-left: 15px;
+  padding-right: 0.938;
+  padding-left: 0.938rem;
 }
 @media (min-width: 476px) {
   .container {
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 0.938rem;
+    padding-left: 0.938rem;
   }
 }
 @media (min-width: 768px) {
   .container {
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 0.938rem;
+    padding-left: 0.938rem;
   }
 }
 @media (min-width: 992px) {
   .container {
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 0.938rem;
+    padding-left: 0.938rem;
   }
 }
 @media (min-width: 1200px) {
   .container {
-    padding-right: 15px;
-    padding-left: 15px;
+    padding-right: 0.938rem;
+    padding-left: 0.938rem;
   }
 }
 @media (min-width: 476px) {
@@ -48,25 +48,25 @@
 }
 @media (min-width: 768px) {
   .container {
-    width: 720px;
+    width: 45rem;
     max-width: 100%;
   }
 }
 @media (min-width: 992px) {
   .container {
-    width: 960px;
+    width: 60rem;
     max-width: 100%;
   }
 }
 @media (min-width: 1200px) {
   .container {
-    width: 1140px;
+    width: 71.25rem;
     max-width: 100%;
   }
 }
 @media (min-width: 1400px) {
   .container {
-    width: 1340px;
+    width: 83.75rem;
     max-width: 100%;
   }
 }
@@ -81,16 +81,36 @@ body {
 }
 
 div::-webkit-scrollbar {
-  width: 4px;
-  height: 4px;
+  width: 0.25rem;
+  height: 0.25rem;
 }
 div::-webkit-scrollbar-thumb {
   background: transparent;
 }
 div:hover::-webkit-scrollbar-thumb {
   background: #888;
-  border-radius: 12px;
+  border-radius: 0.75rem;
 }
+/* WebKit browsers (Chrome, Safari, Edge) */
+::-webkit-scrollbar {
+  width: 0.5rem; /* Width of the scrollbar */
+  height: 0.25rem; /* Height of the scrollbar */
+}
+
+::-webkit-scrollbar-track {
+  background: #f1f1f1; /* Background of the scrollbar track */
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #ef5b1e; /* Color of the scrollbar thumb */
+  border-radius: 0.625rem; /* Rounded corners */
+  border: 0.188rem solid #f1f1f1; /* Padding around the thumb */
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: #555; /* Change thumb color on hover */
+}
+
 *,
 *::before,
 *::after {
@@ -151,6 +171,6 @@ h6 {
   isolation: isolate;
 }
 
-a{
+a {
   text-decoration: none;
 }

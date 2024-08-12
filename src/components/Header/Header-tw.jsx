@@ -27,8 +27,8 @@ import {
   PlayCircleIcon,
 } from "@heroicons/react/20/solid";
 import "./Header.css";
-import { ThemeContext } from "../../context/ThemeContext";
 import { Switch } from "antd";
+import { Context } from "../../context/Context";
 
 const products = [
   {
@@ -69,7 +69,7 @@ const callsToAction = [
 
 export default function Headertw() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isDarkMode, handleThemeChange } = useContext(ThemeContext);
+  const { isDarkMode, handleThemeChange } = useContext(Context);
   return (
     <header
       className=" header-container py-1 border-b border-orange-500 rounded"
@@ -184,6 +184,7 @@ export default function Headertw() {
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Switch
+            style={{ backgroundColor: isDarkMode ? "#ef5b1e" : "" }}
             checkedChildren="Tối"
             unCheckedChildren="Sáng"
             onChange={handleThemeChange}
@@ -277,6 +278,7 @@ export default function Headertw() {
               </div>
               <div className="py-6">
                 <Switch
+                  style={{ backgroundColor: isDarkMode ? "#ef5b1e" : "" }}
                   checkedChildren="Tối"
                   unCheckedChildren="Sáng"
                   onChange={handleThemeChange}
