@@ -1,13 +1,14 @@
-import { useRef, useEffect, useContext } from "react";
-import { Slider, Typography, Button, Select } from "antd";
+import { useState, useEffect, useRef, useContext } from "react";
+import WavesurferPlayer from "@wavesurfer/react";
+import { Typography, Button, Select, Slider } from "antd";
 import { IoMdSkipBackward, IoMdSkipForward } from "react-icons/io";
 import { IoVolumeHighOutline, IoVolumeMuteOutline } from "react-icons/io5";
 import { CiPause1, CiPlay1 } from "react-icons/ci";
 import { BiReset } from "react-icons/bi";
 import style from "./AudioPLay.module.css";
-import { Context } from "../../context/Context";
 const { Title } = Typography;
 const { Option } = Select;
+import { Context } from "../../context/Context";
 
 const playbackRates = [0.5, 1, 1.5, 2];
 
@@ -22,38 +23,35 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     volume,
     setVolume,
     muted,
-    setMuted,
     playbackRate,
     setPlaybackRate,
     sliderVisible,
     setSliderVisible,
   } = useContext(Context);
-
-  const audioRef = useRef(null);
+  const [wavesurfer, setWavesurfer] = useState(null);
   const volumeControlRef = useRef(null);
 
+  const onReady = (ws) => {
+    setWavesurfer(ws);
+    setDuration(ws.getDuration());
+    setPlaying(false);
+  };
+
   useEffect(() => {
-    if (audioRef.current) {
-      const handleLoadedMetadata = () => {
-        setDuration(audioRef.current.duration);
-      };
-
+    if (wavesurfer) {
       const handleTimeUpdate = () => {
-        setCurrentTime(audioRef.current?.currentTime);
+        setCurrentTime(wavesurfer.getCurrentTime());
       };
 
-      audioRef.current.addEventListener("loadedmetadata", handleLoadedMetadata);
-      audioRef.current.addEventListener("timeupdate", handleTimeUpdate);
+      wavesurfer.on("audioprocess", handleTimeUpdate);
+      wavesurfer.on("seek", handleTimeUpdate);
 
       return () => {
-        audioRef.current?.removeEventListener(
-          "loadedmetadata",
-          handleLoadedMetadata
-        );
-        audioRef.current?.removeEventListener("timeupdate", handleTimeUpdate);
+        wavesurfer.un("audioprocess", handleTimeUpdate);
+        wavesurfer.un("seek", handleTimeUpdate);
       };
     }
-  }, []);
+  }, [wavesurfer]);
 
   useEffect(() => {
     const handleClickOutside = (event) => {
@@ -70,72 +68,48 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     return () => {
       document.removeEventListener("mousedown", handleClickOutside);
     };
-  }, []);
+  }, [setSliderVisible]);
 
   const togglePlay = () => {
-    if (audioRef.current.paused) {
-      audioRef.current.play();
-      setPlaying(true);
-    } else {
-      audioRef.current.pause();
-      setPlaying(false);
+    if (wavesurfer) {
+      wavesurfer.playPause();
+      setPlaying(!playing);
     }
   };
 
   const handleVolumeChange = (value) => {
     setVolume(value);
-    if (audioRef.current) {
-      audioRef.current.volume = value;
-      if (value === 0) {
-        setMuted(true);
-      } else {
-        setMuted(false);
-      }
+    if (wavesurfer) {
+      wavesurfer.setVolume(value);
     }
   };
 
-  // const toggleMute = () => {
-  //   setMuted(!muted);
-  //   if (audioRef.current) {
-  //     audioRef.current.muted = !muted;
-  //     if (muted) {
-  //       setVolume(1);
-  //       audioRef.current.volume = 1;
-  //     } else {
-  //       setVolume(0);
-  //       audioRef.current.volume = 0;
-  //     }
-  //   }
-  // };
-
   const skipForward = () => {
-    if (audioRef.current) {
+    if (wavesurfer) {
       const newTime = Math.min(currentTime + 10, duration);
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
+      wavesurfer.seekTo(newTime / duration);
     }
   };
 
   const skipBackward = () => {
-    if (audioRef.current) {
+    if (wavesurfer) {
       const newTime = Math.max(currentTime - 10, 0);
-      audioRef.current.currentTime = newTime;
-      setCurrentTime(newTime);
+      wavesurfer.seekTo(newTime / duration);
     }
   };
 
   const handlePlaybackRateChange = (value) => {
     setPlaybackRate(value);
-    if (audioRef.current) {
-      audioRef.current.playbackRate = value;
+    if (wavesurfer) {
+      wavesurfer.setPlaybackRate(value);
     }
   };
 
   const resetAudio = () => {
-    if (audioRef.current) {
-      audioRef.current.currentTime = 0;
+    if (wavesurfer) {
+      wavesurfer.seekTo(0);
       setCurrentTime(0);
-      audioRef.current.play();
+      wavesurfer.play();
       setPlaying(true);
     }
   };
@@ -146,21 +120,16 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
 
   return (
     <div style={{ width: "100%", padding: "20px", textAlign: "center" }}>
-      <audio ref={audioRef} src={audioSrc} />
+      <WavesurferPlayer
+        height={100}
+        waveColor=" #6666ff"
+        url={audioSrc}
+        onReady={onReady}
+        onPlay={() => setPlaying(true)}
+        onPause={() => setPlaying(false)}
+      />
 
       <Title level={4}>{fileName}</Title>
-      <Slider
-        min={0}
-        max={duration}
-        value={currentTime}
-        onChange={(value) => {
-          if (audioRef.current) {
-            audioRef.current.currentTime = value;
-            setCurrentTime(value);
-          }
-        }}
-        style={{ marginBottom: "10px" }}
-      />
 
       <div style={{ marginBottom: "10px" }}>
         {new Date(currentTime * 1000).toISOString().substr(11, 8)} /{" "}
@@ -172,6 +141,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
           <Button
             onClick={handleVolumeIconClick}
             style={{ marginRight: "10px" }}
+            className={style.btnVolume}
           >
             {muted || volume === 0 ? (
               <IoVolumeMuteOutline />
@@ -182,6 +152,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
           {sliderVisible && (
             <div className={style.volumeSliderContainer}>
               <Slider
+                vertical
                 min={0}
                 max={1}
                 step={0.01}

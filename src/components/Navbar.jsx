@@ -1,7 +1,6 @@
 import {
   UploadOutlined,
   UserOutlined,
-  VideoCameraOutlined,
 } from "@ant-design/icons";
 import { Layout, Menu, Divider } from "antd";
 const { Sider } = Layout;
@@ -18,10 +17,11 @@ function Navbar() {
     margin: "20px auto",
   };
   return (
-    <Sider
+    <Sider className="container"
       trigger={null}
       collapsible
       collapsed={collapsed}
+      position="fixed"
       theme="light"
       style={{ position: "relative", height: "100vh" }}
     >
@@ -29,8 +29,9 @@ function Navbar() {
         theme="light"
         mode="inline"
         defaultSelectedKeys={["1"]}
-        style={{ height: "100%", padding: "20px 0", paddingTop: "180px" }}
+        style={{ height: "100%", padding: "20px 0", paddingTop: "240px" }}
       >
+        <Divider solid style={{ margin: "10px 0" }} />
         <Menu.Item key="1" icon={<UserOutlined />} style={menuItemStyle}>
           <Link to="/">Giới thiệu </Link>
         </Menu.Item>
@@ -39,9 +40,6 @@ function Navbar() {
           <Link to="/upload">Tải lên</Link>
         </Menu.Item>
         <Divider solid style={{ margin: "10px 0" }} />
-        <Menu.Item key="3" icon={<VideoCameraOutlined />} style={menuItemStyle}>
-          <Link to="/result">Kết quả</Link>
-        </Menu.Item>
       </Menu>
     </Sider>
   );

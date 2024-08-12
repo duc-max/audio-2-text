@@ -1,11 +1,95 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 #root {
-  max-width: 1280px;
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
 }
 /*
   1. Use a more-intuitive box-sizing model.
 */
+.container {
+  position: relative;
+  margin-left: auto;
+  margin-right: auto;
+  padding-right: 15px;
+  padding-left: 15px;
+}
+@media (min-width: 476px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    padding-right: 15px;
+    padding-left: 15px;
+  }
+}
+@media (min-width: 476px) {
+  .container {
+    width: 100%;
+  }
+}
+@media (min-width: 768px) {
+  .container {
+    width: 720px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 992px) {
+  .container {
+    width: 960px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 1200px) {
+  .container {
+    width: 1140px;
+    max-width: 100%;
+  }
+}
+@media (min-width: 1400px) {
+  .container {
+    width: 1340px;
+    max-width: 100%;
+  }
+}
+html,
+body {
+  overflow-x: hidden; /* Prevent horizontal scrolling */
+  width: 100%; /* Ensure full width */
+  overflow-y: auto; /* Enable vertical scrolling when needed */
+  height: 100%; /* Ensure full height */
+  margin: 0; /* Remove default margins */
+  box-sizing: border-box; /* Include padding and border in element's total width and height */
+}
+
+div::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+div::-webkit-scrollbar-thumb {
+  background: transparent;
+}
+div:hover::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 12px;
+}
 *,
 *::before,
 *::after {
@@ -64,4 +148,8 @@ h6 {
 #root,
 #__next {
   isolation: isolate;
+}
+
+a{
+  text-decoration: none;
 }
