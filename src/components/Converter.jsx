@@ -179,17 +179,13 @@ function Converter() {
   ];
 
   return (
-    <Content
-      style={{
-        margin: "24px 16px 0",
-      }}
-    >
+    <Content>
       <div
         style={{
           maxHeight: 500,
           background: "#f2f4f5",
           borderRadius: borderRadiusLG,
-          padding: "0 24 24 24",
+          padding: "0 0 24 24",
           ...(loading == false
             ? {
                 overflowY: "scroll",
@@ -268,9 +264,6 @@ function Converter() {
                       </Popover>
                     </div>
                   </Skeleton>
-                  {selectedDetail && (
-                    <Detailed emotions={selectedDetail.emotions} />
-                  )}
                 </List.Item>
               )}
             />
