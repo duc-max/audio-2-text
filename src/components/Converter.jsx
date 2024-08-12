@@ -1,133 +1,27 @@
 import { Layout, theme, Popover, Table } from "antd";
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
-import { Avatar, List, Skeleton, Progress } from "antd";
+import { Avatar, List, Skeleton, Progress, Row, Col } from "antd";
 import { RiSpeakLine } from "react-icons/ri";
 
-import Detailed from "./others/Modal";
 import "./Common.css";
-import { Col, Row } from "react-bootstrap";
 
 const { Content } = Layout;
 
 const colors = {
-  vui: "#ffa940", // Happiness
-  buồn: "#8c8c8c", // Sadness
-  "bình thường": "#ad6800", // Neutral
-  giận: "#f5222d", // Anger
-  sợ: "#9254de", // Fear
-  "ngạc nhiên": "#ffc53d", // Surprise
+  Happy: "#ffa940",
+  Sad: "#8c8c8c",
+  Neutral: "#ad6800",
+  Angry: "#f5222d",
+  Anxiety: "#ffc53d",
 };
 
 function Converter() {
-  const data = {
-    status: 0,
-    statusCode: 200,
-    object: [
-      {
-        id: "A",
-        text: " xin chào ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
-      {
-        id: "B",
-        text: " xin chào ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
-      {
-        id: "C",
-        text: " xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 80,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-          {
-            key: "giận",
-            percent: 60,
-          },
-        ],
-      },
-      {
-        id: "D",
-        text: " xin chào ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
-      {
-        id: "A",
-        text: "xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha hsada shdashdasd sahdhasdhashd asd ashdedhasd hdas",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
-    ],
-    isOk: true,
-    isError: false,
-  };
-
   const {
     token: { borderRadiusLG },
   } = theme.useToken();
 
-  const { loading, setLoading, selectedDetail, percentage, setPercentage } =
+  const { loading, setLoading, percentage, setPercentage, data } =
     useContext(Context);
 
   useEffect(() => {
@@ -160,14 +54,31 @@ function Converter() {
     return colors[emotion] || "#000";
   };
 
+  const getEmotionName = (emotion) => {
+    switch (emotion) {
+      case "Happy":
+        return "Vui vẻ";
+      case "Sad":
+        return "Buồn";
+      case "Angry":
+        return "Giận dữ";
+      case "Neutral":
+        return "Bình thường";
+      case "Anxiety":
+        return "Lo lắng";
+      default:
+        return "";
+    }
+  };
+
   const emotionColumns = [
     {
       title: "Cảm xúc",
       dataIndex: "key",
       key: "key",
       render: (text) => (
-        <span style={{ color: getEmotionColor(text), fontSize: 16 }}>
-          {text}
+        <span style={{ color: getEmotionColor(text.trim()), fontSize: 16 }}>
+          {getEmotionName(text.trim())}
         </span>
       ),
     },
@@ -182,35 +93,40 @@ function Converter() {
     <Content>
       <div
         style={{
-          maxHeight: 500,
-          background: "#f2f4f5",
+          minHeight: 500,
           borderRadius: borderRadiusLG,
+          background: "#f2f4f5",
           padding: "0 0 24 24",
           ...(loading == false
             ? {
                 overflowY: "scroll",
                 overflowX: "hidden",
-                maxHeight: "500px",
+                height: "180px",
               }
             : {}),
         }}
       >
         {loading ? <Progress percent={percentage} /> : ""}
         <Row gutter={[16, 16]}>
-          <Col xs={12} sm={12} md={12}>
+          <Col xs={24} sm={24} md={24}>
             <List
               itemLayout="vertical"
               size="default"
-              dataSource={data.object}
+              dataSource={data}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i} style={{ marginRight: 12, marginLeft: 12 }}>
-                  <Skeleton loading={loading == true} active avatar paragraph>
+                <List.Item key={i} style={{ marginRight: 6, paddingLeft: 6 }}>
+                  <Skeleton
+                    loading={loading == true}
+                    active
+                    avatar
+                    paragraph
+                    style={{ height: "100%" }}
+                    className="p-8"
+                  >
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
-                      avatar={
-                        <Avatar src={`../assets/speaker${item.id}.png`} />
-                      }
+                      avatar={<Avatar src={`../assets/${item.id}.png`} />}
                       title={<span>Person: {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
@@ -224,7 +140,7 @@ function Converter() {
                       >
                         <span
                           style={{
-                            flexShrink: 0, // Prevent the icon from shrinking
+                            flexShrink: 0,
                             paddingRight: "8px",
                           }}
                         >
@@ -246,17 +162,18 @@ function Converter() {
                       >
                         <span style={{ cursor: "pointer" }}>
                           {item.emotion
+                            .filter((e) => e.percent > 0)
                             .sort((a, b) => b.percent - a.percent)
                             .slice(0, 2)
                             .map((e, index) => (
                               <span
                                 key={index}
                                 style={{
-                                  color: getEmotionColor(e.key),
+                                  color: getEmotionColor(e.key.trim()),
                                   fontSize: 16,
                                 }}
                               >
-                                {e.key}
+                                {getEmotionName(e.key.trim())}
                                 {index < 1 ? ", " : ""}
                               </span>
                             ))}

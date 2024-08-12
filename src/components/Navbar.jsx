@@ -17,7 +17,7 @@ function Navbar() {
     margin: "20px auto",
   };
   return (
-    <Sider
+    <Sider className="container"
       trigger={null}
       collapsible
       collapsed={collapsed}
