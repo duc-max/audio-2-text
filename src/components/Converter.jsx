@@ -18,13 +18,13 @@ const colors = {
 };
 
 function Converter() {
-  const data = {
+  const data2 = {
     status: 0,
     statusCode: 200,
     object: [
       {
-        id: "A",
-        text: " xin chào ",
+        id: "Invalid",
+        text: "Invalid",
         emotion: [
           {
             key: "vui",
@@ -41,8 +41,8 @@ function Converter() {
         ],
       },
       {
-        id: "B",
-        text: " xin chào ",
+        id: "Invalid",
+        text: "Invalid",
         emotion: [
           {
             key: "vui",
@@ -59,8 +59,8 @@ function Converter() {
         ],
       },
       {
-        id: "C",
-        text: " xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
+        id: "Invalid",
+        text: "Invalid",
         emotion: [
           {
             key: "vui",
@@ -80,42 +80,6 @@ function Converter() {
           },
         ],
       },
-      {
-        id: "D",
-        text: " xin chào ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
-      {
-        id: "A",
-        text: "xin chào moi nguoi toi la mot con nguoi thongh minh manh menh jahhaha ",
-        emotion: [
-          {
-            key: "vui",
-            percent: 10,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-        ],
-      },
     ],
     isOk: true,
     isError: false,
@@ -125,9 +89,9 @@ function Converter() {
     token: { colorBgContainer, borderRadiusLG },
   } = theme.useToken();
 
-  const { loading, setLoading, percentage, setPercentage } =
+  const { loading, setLoading, percentage, setPercentage, data } =
     useContext(Context);
-
+  console.log(data);
   useEffect(() => {
     if (loading) {
       const loadApi = () => {
@@ -185,8 +149,8 @@ function Converter() {
       <div
         style={{
           minHeight: 500,
-          background: colorBgContainer,
           borderRadius: borderRadiusLG,
+          background: "#f2f4f5",
           padding: "0 24 24 24",
           ...(loading == false
             ? {
@@ -203,10 +167,10 @@ function Converter() {
             <List
               itemLayout="vertical"
               size="default"
-              dataSource={data.object}
+              dataSource={data ? data : data2}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i} style={{ marginRight: 6 }} >
+                <List.Item key={i} style={{ marginRight: 6 }}>
                   <Skeleton
                     loading={loading == true}
                     active
@@ -256,21 +220,23 @@ function Converter() {
                         trigger="hover"
                       >
                         <span style={{ cursor: "pointer" }}>
-                          {item.emotion
-                            .sort((a, b) => b.percent - a.percent)
-                            .slice(0, 2)
-                            .map((e, index) => (
-                              <span
-                                key={index}
-                                style={{
-                                  color: getEmotionColor(e.key),
-                                  fontSize: 16,
-                                }}
-                              >
-                                {e.key}
-                                {index < 1 ? ", " : ""}
-                              </span>
-                            ))}
+                          {item
+                            ? item?.emotion
+                                .sort((a, b) => b.percent - a.percent)
+                                .slice(0, 2)
+                                .map((e, index) => (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: getEmotionColor(e.key),
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    {e.key}
+                                    {index < 1 ? ", " : ""}
+                                  </span>
+                                ))
+                            : "Không có dữ liệu"}
                         </span>
                       </Popover>
                     </div>

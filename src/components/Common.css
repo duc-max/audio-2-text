@@ -36,3 +36,7 @@
     padding-top: 20px !important;
   }
 }
+
+.ant-upload-list .ant-upload-list-text {
+  display: none !important;
+}

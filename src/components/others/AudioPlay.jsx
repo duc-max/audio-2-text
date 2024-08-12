@@ -119,7 +119,13 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
   };
 
   return (
-    <div style={{ width: "100%", padding: "20px", textAlign: "center" }}>
+    <div
+      style={{
+        width: "100%",
+        padding: "20px 20px 0 20px",
+        textAlign: "center",
+      }}
+    >
       <WavesurferPlayer
         height={100}
         waveColor=" #6666ff"
@@ -137,7 +143,11 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
       </div>
 
       <div className={style.audioPlayWrapper} style={{ marginBottom: "10px" }}>
-        <div className={style.volumeControlWrapper} ref={volumeControlRef}>
+        <div
+          className={style.volumeControlWrapper}
+          style={{ marginBottom: "0px" }}
+          ref={volumeControlRef}
+        >
           <Button
             onClick={handleVolumeIconClick}
             style={{ marginRight: "10px" }}
@@ -162,19 +172,19 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
               />
             </div>
           )}
-          <Select
+          {/* <Select
             value={playbackRate}
             onChange={handlePlaybackRateChange}
-            style={{ width: 70 }}
+            style={{ width: 58, marginRight: "10px" }}
           >
             {playbackRates.map((rate) => (
               <Option key={rate} value={rate}>
                 {rate}x
               </Option>
             ))}
-          </Select>
+          </Select> */}
         </div>
-        <div>
+        <div className="audioController">
           <Button onClick={skipBackward} style={{ marginRight: "10px" }}>
             <IoMdSkipBackward />
           </Button>
