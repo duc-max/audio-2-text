@@ -9,12 +9,11 @@ import "./Common.css";
 const { Content } = Layout;
 
 const colors = {
-  vui: "#ffa940", // Happiness
-  buồn: "#8c8c8c", // Sadness
-  "bình thường": "#ad6800", // Neutral
-  giận: "#f5222d", // Anger
-  sợ: "#9254de", // Fear
-  "ngạc nhiên": "#ffc53d", // Surprise
+  Happy: "#ffa940",
+  Sad: "#8c8c8c",
+  Neutral: "#ad6800",
+  Angry: "#f5222d",
+  Anxiety: "#ffc53d",
 };
 
 function Converter() {
@@ -86,7 +85,7 @@ function Converter() {
   };
 
   const {
-    token: { colorBgContainer, borderRadiusLG },
+    token: { borderRadiusLG },
   } = theme.useToken();
 
   const { loading, setLoading, percentage, setPercentage, data } =
@@ -122,14 +121,30 @@ function Converter() {
     return colors[emotion] || "#000";
   };
 
+  const getEmotionName = (emotion) => {
+    switch (emotion) {
+      case "Happy":
+        return "Vui vẻ";
+      case "Sad":
+        return "Buồn";
+      case "Angry":
+        return "Giận dữ";
+      case "Neutral":
+        return "Bình thường";
+      case "Anxiety":
+        return "Lo lắng";
+      default:
+        return "";
+    }
+  };
   const emotionColumns = [
     {
       title: "Cảm xúc",
       dataIndex: "key",
       key: "key",
       render: (text) => (
-        <span style={{ color: getEmotionColor(text), fontSize: 16 }}>
-          {text}
+        <span style={{ color: getEmotionColor(text.trim()), fontSize: 16 }}>
+          {getEmotionName(text.trim())}
         </span>
       ),
     },
@@ -141,11 +156,7 @@ function Converter() {
   ];
 
   return (
-    <Content
-      style={{
-        margin: "24px 16px 0",
-      }}
-    >
+    <Content>
       <div
         style={{
           minHeight: 500,
@@ -167,10 +178,10 @@ function Converter() {
             <List
               itemLayout="vertical"
               size="default"
-              dataSource={data ? data : data2}
+              dataSource={data.length == 0 ? data2.object : data}
               style={{ height: "100%" }}
               renderItem={(item, i) => (
-                <List.Item key={i} style={{ marginRight: 6 }}>
+                <List.Item key={i} style={{ marginRight: 6, paddingLeft: 6 }}>
                   <Skeleton
                     loading={loading == true}
                     active
@@ -181,11 +192,7 @@ function Converter() {
                   >
                     <List.Item.Meta
                       style={{ marginBottom: "4px" }}
-                      avatar={
-                        <Avatar
-                          src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${item.id}`}
-                        />
-                      }
+                      avatar={<Avatar src={`../assets/${item.id}.png`} />}
                       title={<span>Person: {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
@@ -199,7 +206,7 @@ function Converter() {
                       >
                         <span
                           style={{
-                            flexShrink: 0, // Prevent the icon from shrinking
+                            flexShrink: 0,
                             paddingRight: "8px",
                           }}
                         >

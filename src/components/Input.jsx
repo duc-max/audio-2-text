@@ -36,7 +36,7 @@ const Input = () => {
     setIsProcessAudio(false);
   };
   const uploadRequest = {};
-  const backgroundImage = isDarkMode ? darkBackground : lightBackground;
+  const backgroundImage = isDarkMode ? "" : lightBackground;
   const props = {
     name: "file",
     action: "https://192.168.93.55:5001/api/FileUpload/upload",
@@ -44,97 +44,97 @@ const Input = () => {
     method: "POST",
     accept: "audio/*",
     disabled: uploadedFile ? true : false,
-    beforeUpload: async (file) => {
-      if (fileValidator(file) === false) {
-        file.status = "error";
-        message.error(
-          "Invalid file type or size. Please upload an audio file that is less than 7MB."
-        );
-      } else {
-        try {
-          // Read the audio file as an array buffer
-          const arrayBuffer = await file.arrayBuffer();
+    // beforeUpload: async (file) => {
+    //   if (fileValidator(file) === false) {
+    //     file.status = "error";
+    //     message.error(
+    //       "Invalid file type or size. Please upload an audio file that is less than 7MB."
+    //     );
+    //   } else {
+    //     try {
+    //       // Read the audio file as an array buffer
+    //       const arrayBuffer = await file.arrayBuffer();
 
-          // Use the Web Audio API to decode the audio data and get the sample rate
-          const audioContext = new (window.AudioContext ||
-            window.webkitAudioContext)();
-          const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
-          const inputSampleRate = audioBuffer.sampleRate;
+    // //       // Use the Web Audio API to decode the audio data and get the sample rate
+    // //       const audioContext = new (window.AudioContext ||
+    // //         window.webkitAudioContext)();
+    // //       const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
+    // //       const inputSampleRate = audioBuffer.sampleRate;
 
-          // Resampling parameters
-          const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
-          const nChannels = audioBuffer.numberOfChannels;
-          const outputSampleRate = 16000;
+    // //       // Resampling parameters
+    // //       const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
+    // //       const nChannels = audioBuffer.numberOfChannels;
+    // //       const outputSampleRate = 16000;
 
-          // Create resampler
-          const src = await create(
-            nChannels,
-            inputSampleRate,
-            outputSampleRate,
-            {
-              converterType: converterType,
-            }
-          );
+    // //       // Create resampler
+    // //       const src = await create(
+    // //         nChannels,
+    // //         inputSampleRate,
+    // //         outputSampleRate,
+    // //         {
+    // //           converterType: converterType,
+    // //         }
+    // //       );
 
-          // Resample each channel
-          const resampledChannels = [];
-          for (let channel = 0; channel < nChannels; channel++) {
-            const audioData = audioBuffer.getChannelData(channel);
-            const resampledData = src.simple(audioData);
-            resampledChannels.push(resampledData);
-          }
-          src.destroy(); // Clean up
+    // //       // Resample each channel
+    // //       const resampledChannels = [];
+    // //       for (let channel = 0; channel < nChannels; channel++) {
+    // //         const audioData = audioBuffer.getChannelData(channel);
+    // //         const resampledData = src.simple(audioData);
+    // //         resampledChannels.push(resampledData);
+    // //       }
+    // //       src.destroy(); // Clean up
 
-          // Combine resampled data into a single array (if multi-channel)
-          let combinedResampledData;
-          if (nChannels === 1) {
-            combinedResampledData = resampledChannels[0];
-          } else {
-            combinedResampledData = new Float32Array(
-              resampledChannels[0].length * nChannels
-            );
-            for (let channel = 0; channel < nChannels; channel++) {
-              combinedResampledData.set(
-                resampledChannels[channel],
-                channel * resampledChannels[0].length
-              );
-            }
-          }
+    // //       // Combine resampled data into a single array (if multi-channel)
+    // //       let combinedResampledData;
+    // //       if (nChannels === 1) {
+    // //         combinedResampledData = resampledChannels[0];
+    // //       } else {
+    // //         combinedResampledData = new Float32Array(
+    // //           resampledChannels[0].length * nChannels
+    // //         );
+    // //         for (let channel = 0; channel < nChannels; channel++) {
+    // //           combinedResampledData.set(
+    // //             resampledChannels[channel],
+    // //             channel * resampledChannels[0].length
+    // //           );
+    // //         }
+    // //       }
 
-          // Convert Float32Array to Int16Array for WAV format
-          const int16Data = new Int16Array(combinedResampledData.length);
-          for (let i = 0; i < combinedResampledData.length; i++) {
-            int16Data[i] =
-              Math.max(-1, Math.min(1, combinedResampledData[i])) * 0x7fff; // Convert to 16-bit PCM
-          }
+    // //       // Convert Float32Array to Int16Array for WAV format
+    // //       const int16Data = new Int16Array(combinedResampledData.length);
+    // //       for (let i = 0; i < combinedResampledData.length; i++) {
+    // //         int16Data[i] =
+    // //           Math.max(-1, Math.min(1, combinedResampledData[i])) * 0x7fff; // Convert to 16-bit PCM
+    // //       }
 
-          // Create a new Blob from the resampled data
-          const resampledBlob = new Blob([int16Data.buffer], {
-            type: "audio/wav",
-          });
+    // //       // Create a new Blob from the resampled data
+    // //       const resampledBlob = new Blob([int16Data.buffer], {
+    // //         type: "audio/wav",
+    // //       });
 
-          // Create a new File object from the resampled Blob
-          const resampledFile = new File([resampledBlob], file.name, {
-            type: "audio/wav",
-            lastModified: Date.now(),
-          });
-          uploadRequest[file.uid] = resampledFile;
-          // Replace the original file with the resampled file
-          return resampledFile;
-        } catch (error) {
-          console.error("Error during resampling:", error);
-          message.error(`Failed to resample audio file: ${error.message}`);
-          return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-        }
-      }
-    },
+    //       // Create a new File object from the resampled Blob
+    //       const resampledFile = new File([resampledBlob], file.name, {
+    //         type: "audio/wav",
+    //         lastModified: Date.now(),
+    //       });
+    //       uploadRequest[file.uid] = resampledFile;
+    //       // Replace the original file with the resampled file
+    //       return resampledFile;
+    //     } catch (error) {
+    //       console.error("Error during resampling:", error);
+    //       message.error(`Failed to resample audio file: ${error.message}`);
+    //       return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+    //     }
+    //   }
+    // },
 
     onChange: async (info) => {
       if (fileValidator(info.file) === false) {
         info.file.status = "error";
       } else {
         let { status } = info.file;
-        if (status === "uploading") {
+        if (status != "done") {
           setUploadedFile({
             fileName: info.file.name,
             audioSrc: URL.createObjectURL(info.file.originFileObj),
@@ -142,12 +142,7 @@ const Input = () => {
         } else if (status === "done") {
           console.log("info.file: ", info.file);
           message.success(`${info.file.name} file uploaded successfully.`);
-          setTimeout(() => {
-            setUploadedFile({
-              fileName: info.file.name,
-              audioSrc: URL.createObjectURL(info.file.originFileObj),
-            });
-          }, 1000);
+          setTimeout(() => {}, 1000);
           console.log("info.file: ", info.file?.response?.object);
           setData(info.file?.response?.object);
           console.log(data);
@@ -176,10 +171,10 @@ const Input = () => {
     >
       <Layout
         style={{
-          // backgroundImage: `url(${backgroundImage})`,
-          // backgroundSize: "cover",
-          // backgroundRepeat: "no-repeat",
-          // backgroundAttachment: "fixed",
+          backgroundImage: `url(${backgroundImage})`,
+          backgroundSize: "cover",
+          backgroundRepeat: "no-repeat",
+          backgroundAttachment: "fixed",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
           paddingTop: "64px",
           position: "relative",
@@ -232,7 +227,7 @@ const Input = () => {
                             color: isDarkMode ? "#000" : "inherit",
                           }}
                         >
-                          Clear
+                          Xóa
                         </Button>
                         <Button
                           type="primary"
@@ -263,7 +258,7 @@ const Input = () => {
                           color: isDarkMode ? "#f5f5f5" : "inherit",
                         }}
                       >
-                        Drop audio file here
+                        Thả tệp âm thanh vào đây
                       </Text>
                       <Divider
                         style={{
@@ -277,7 +272,7 @@ const Input = () => {
                             color: isDarkMode ? "#f5f5f5" : "inherit",
                           }}
                         >
-                          or
+                          hoặc
                         </p>
                       </Divider>
                       <Text
@@ -286,7 +281,7 @@ const Input = () => {
                           color: isDarkMode ? "#f5f5f5" : "inherit",
                         }}
                       >
-                        Click to upload
+                        Thả tệp âm thanh vào đây
                       </Text>
                       <Button
                         icon={<UploadOutlined />}
@@ -296,7 +291,7 @@ const Input = () => {
                           color: isDarkMode ? "#000" : "inherit",
                         }}
                       >
-                        Click to Upload
+                        Chọn tệp
                       </Button>
                       <Text
                         className="ant-upload-hint d-block"
@@ -307,7 +302,7 @@ const Input = () => {
                           color: isDarkMode ? "#f5f5f5" : "inherit",
                         }}
                       >
-                        {`Supported file extensions : ${props.accept} `}
+                        *Hỗ trợ tất cả các tệp âm thanh
                       </Text>
                     </Dragger>
                   )}
