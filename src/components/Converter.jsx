@@ -88,34 +88,8 @@ function Converter() {
     token: { borderRadiusLG },
   } = theme.useToken();
 
-  const { loading, setLoading, percentage, setPercentage, data } =
-    useContext(Context);
+  const { data, upload } = useContext(Context);
   console.log(data);
-  useEffect(() => {
-    if (loading) {
-      const loadApi = () => {
-        let currentPercentage = 0;
-        const intervalId = setInterval(() => {
-          const increment =
-            Math.floor(Math.random() * 10) !== 0
-              ? Math.floor(Math.random() * 10)
-              : 1;
-          currentPercentage += increment;
-          if (currentPercentage > 100) {
-            currentPercentage = 100;
-          }
-          setPercentage(currentPercentage);
-          console.log("Percentage:", currentPercentage);
-          if (currentPercentage >= 100) {
-            clearInterval(intervalId);
-            setLoading(false);
-          }
-        }, 200);
-      };
-
-      loadApi();
-    }
-  }, [loading]);
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -163,16 +137,8 @@ function Converter() {
           borderRadius: borderRadiusLG,
           background: "#f2f4f5",
           padding: "0 24 24 24",
-          ...(loading == false
-            ? {
-                overflowY: "scroll",
-                overflowX: "hidden",
-                height: "180px",
-              }
-            : {}),
         }}
       >
-        {loading ? <Progress percent={percentage} /> : ""}
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={24}>
             <List
@@ -183,7 +149,7 @@ function Converter() {
               renderItem={(item, i) => (
                 <List.Item key={i} style={{ marginRight: 6, paddingLeft: 6 }}>
                   <Skeleton
-                    loading={loading == true}
+                    loading={!upload}
                     active
                     avatar
                     paragraph

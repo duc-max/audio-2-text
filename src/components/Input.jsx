@@ -30,7 +30,8 @@ const { Content } = Layout;
 const Input = () => {
   const { isDarkMode } = useContext(ThemeContext);
   const [isProcessAudio, setIsProcessAudio] = useState(false);
-  let { uploadedFile, setUploadedFile, setData, data } = useContext(Context);
+  let { uploadedFile, setUploadedFile, setData, data, setUpload } =
+    useContext(Context);
   const clearFile = () => {
     setUploadedFile(null);
     setIsProcessAudio(false);
@@ -144,6 +145,7 @@ const Input = () => {
           message.success(`${info.file.name} file uploaded successfully.`);
           setTimeout(() => {}, 1000);
           console.log("info.file: ", info.file?.response?.object);
+          setUpload(true);
           setData(info.file?.response?.object);
           console.log(data);
         } else if (status === "error") {
