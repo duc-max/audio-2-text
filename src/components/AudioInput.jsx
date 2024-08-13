@@ -13,8 +13,8 @@ import AudioPlayer from "./others/AudioPlay";
 import { Context } from "../context/Context";
 import { handleChange } from "../funcs/fileInputHandler";
 import {
-  resampleAudioFile,
-  validateFile,
+  // resampleAudioFile,
+  // validateFile,
   uploadRequest,
 } from "../funcs/fileResampler.js";
 const { Content } = Layout;
@@ -25,13 +25,23 @@ function AudioInput() {
   const {
     isDarkMode,
     uploadedFile,
-    clearFile,
     setIsProcessAudio,
     setUploadedFile,
     setUpload,
     setData,
     data,
+    fileList,
+    setFileList,
   } = useContext(Context);
+  const clearFile = (file) => {
+    if (uploadRequest[file.uid]) {
+      delete uploadRequest[file.uid];
+      message.info(`${file.name} upload has been cancelled.`);
+      console.log(uploadRequest[file.uid]);
+    }
+    setUploadedFile(null);
+    setIsProcessAudio(false);
+  };
   const props = {
     name: "file",
     action: "https://192.168.93.55:5001/api/FileUpload/upload",
@@ -40,23 +50,31 @@ function AudioInput() {
     accept: "audio/*",
     disabled: uploadedFile ? true : false,
     // The main beforeUpload function with integrated error handling
-    beforeUpload: async (file) => {
-      if (!validateFile(file)) {
-        return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-      }
+    // beforeUpload: async (file) => {
+    //   if (!validateFile(file)) {
+    //     return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+    //   }
 
-      try {
-        const resampledFile = await resampleAudioFile(file);
-        uploadRequest[file.uid] = resampledFile;
-        return resampledFile;
-      } catch (error) {
-        console.error(error);
-        message.error(`Failed to resample audio file: ${error.message}`);
-        return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-      }
-    },
+    //   try {
+    //     const resampledFile = await resampleAudioFile(file);
+    //     uploadRequest[file.uid] = resampledFile;
+    //     return resampledFile;
+    //   } catch (error) {
+    //     console.error(error);
+    //     message.error(`Failed to resample audio file: ${error.message}`);
+    //     return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+    //   }
+    // },
 
-    onChange: (info)=>handleChange(info,setUploadedFile, setUpload, setData, data),
+    onChange: (info) =>
+      handleChange(
+        info,
+        setUploadedFile,
+        setUpload,
+        setData,
+        data,
+        setFileList
+      ),
     onRemove: (file) => {
       console.log("removed:", file.name);
       if (uploadRequest[file.uid]) {
@@ -85,15 +103,19 @@ function AudioInput() {
           padding: 0,
         }}
       >
-        {uploadedFile ? (
-          <>
+        {uploadedFile && (
+          <div className="zoom-fade-in">
             <AudioPlayer
               fileName={uploadedFile.fileName}
               audioSrc={uploadedFile.audioSrc}
             />
             <div style={{ textAlign: "center", marginTop: "1.25rem" }}>
               <Button
-                onClick={clearFile}
+                onClick={() => {
+                  if (fileList.length > 0) {
+                    clearFile(fileList[0]);
+                  }
+                }}
                 style={{
                   marginRight: "0.625rem",
                   color: isDarkMode ? "#000" : "inherit",
@@ -102,7 +124,11 @@ function AudioInput() {
                 Xóa
               </Button>
               <Button
-                type="primary"
+                style={{
+                  backgroundColor: "#ef5b1e",
+                  borderColor: "#ef5b1e",
+                  color: "#fff",
+                }}
                 onClick={() => {
                   setIsProcessAudio(true);
                 }}
@@ -110,75 +136,71 @@ function AudioInput() {
                 Xử lý
               </Button>
             </div>
-          </>
-        ) : (
-          <Dragger
-            showUploadList={true}
-            {...props}
-            style={{ border: "none", background: "none" }}
+          </div>
+        )}
+        <Dragger
+          className="fade-in"
+          showUploadList={false}
+          {...props}
+          style={{
+            border: "none",
+            background: "none",
+            display: uploadedFile ? "none" : "block",
+          }}
+        >
+          <p className="ant-upload-drag-icon">
+            <InboxOutlined
+              style={{
+                color: isDarkMode ? "#f5f5f5" : "inherit",
+              }}
+            />
+          </p>
+          <Text
+            className="text-input"
+            style={{
+              color: isDarkMode ? "#f5f5f5" : "inherit",
+            }}
           >
-            <p className="ant-upload-drag-icon">
-              <InboxOutlined
-                style={{
-                  color: isDarkMode ? "#f5f5f5" : "inherit",
-                }}
-              />
-            </p>
-            <Text
+            Thả tệp âm thanh vào đây
+          </Text>
+          <Divider
+            style={{
+              margin: "0.125rem auto",
+              color: isDarkMode ? "#000" : "inherit",
+            }}
+          >
+            <p
               className="text-input"
               style={{
                 color: isDarkMode ? "#f5f5f5" : "inherit",
               }}
             >
-              Thả tệp âm thanh vào đây
-            </Text>
-            <Divider
-              style={{
-                margin: "0.125rem auto",
-                color: isDarkMode ? "#000" : "inherit",
-              }}
-            >
-              <p
-                className="text-input"
-                style={{
-                  color: isDarkMode ? "#f5f5f5" : "inherit",
-                }}
-              >
-                hoặc
-              </p>
-            </Divider>
-            <Text
-              className="text-input d-block"
-              style={{
-                color: isDarkMode ? "#f5f5f5" : "inherit",
-              }}
-            >
-              Thả tệp âm thanh vào đây
-            </Text>
-            <Button
-              icon={<UploadOutlined />}
-              style={{
-                margin: "0.625rem 0",
-                position: "relative",
-                color: isDarkMode ? "#000" : "inherit",
-                borderColor: isDarkMode ? "#ef5b1e" : "",
-              }}
-            >
-              Chọn tệp
-            </Button>
-            <Text
-              className="ant-upload-hint d-block"
-              style={{
-                fontSize: "0.75rem",
-                margin: "0.625rem 0",
-                position: "relative",
-                color: isDarkMode ? "#f5f5f5" : "inherit",
-              }}
-            >
-              *Hỗ trợ tất cả các tệp âm thanh
-            </Text>
-          </Dragger>
-        )}
+              hoặc
+            </p>
+          </Divider>
+          <Button
+            icon={<UploadOutlined />}
+            style={{
+              margin: " 0 0 0.625rem 0",
+              position: "relative",
+              color: isDarkMode ? "#000" : "inherit",
+              borderColor: isDarkMode ? "#ef5b1e" : "",
+            }}
+          >
+            Chọn tệp
+          </Button>
+          <Text
+            className="ant-upload-hint d-block"
+            style={{
+              fontSize: "0.75rem",
+              margin: "0.625rem 0",
+              position: "relative",
+              color: isDarkMode ? "#f5f5f5" : "inherit",
+            }}
+          >
+            *Hỗ trợ tất cả các tệp âm thanh
+          </Text>
+        </Dragger>
       </Col>
     </Content>
   );
