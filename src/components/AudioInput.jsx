@@ -98,8 +98,7 @@ function AudioInput() {
           minHeight: 360,
           borderRadius: 8,
           width: "100%",
-
-          backgroundColor: isDarkMode && !uploadedFile ? "#1f1f1f" : "#ffff",
+          backgroundColor: isDarkMode ? "#1f1f1f" : "#ffff",
           padding: 0,
         }}
       >
