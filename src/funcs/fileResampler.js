@@ -19,6 +19,15 @@ const validateFile = (file) => {
 // Function to resample the audio file
 const resampleAudioFile = async (file) => {
   try {
+    const maxSizeMB = 7;
+    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+
+    if (file.size > maxSizeBytes) {
+      throw new Error(
+        `File size exceeds ${maxSizeMB}MB. Please upload a smaller file.`
+      );
+    }
+
     const arrayBuffer = await file.arrayBuffer();
 
     // Use the Web Audio API to decode the audio data and get the sample rate
@@ -26,6 +35,10 @@ const resampleAudioFile = async (file) => {
       window.webkitAudioContext)();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     const inputSampleRate = audioBuffer.sampleRate;
+
+    if (inputSampleRate !== 96000) {
+      throw new Error("Input file must have a sample rate of 96kHz.");
+    }
 
     // Resampling parameters
     const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
@@ -51,16 +64,18 @@ const resampleAudioFile = async (file) => {
     if (nChannels === 1) {
       combinedResampledData = resampledChannels[0];
     } else {
-      combinedResampledData = new Float32Array(
-        resampledChannels[0].length * nChannels
-      );
+      const length = resampledChannels[0].length;
+      combinedResampledData = new Float32Array(length * nChannels);
       for (let channel = 0; channel < nChannels; channel++) {
-        combinedResampledData.set(
-          resampledChannels[channel],
-          channel * resampledChannels[0].length
-        );
+        combinedResampledData.set(resampledChannels[channel], channel * length);
       }
     }
+
+    // Debugging logs
+    console.log(
+      "Combined Resampled Data Length:",
+      combinedResampledData.length
+    );
 
     // Convert Float32Array to Int16Array for WAV format
     const int16Data = new Int16Array(combinedResampledData.length);
@@ -75,12 +90,14 @@ const resampleAudioFile = async (file) => {
     });
 
     // Create a new File object from the resampled Blob
-    return new File([resampledBlob], file.name, {
+    const resampledFile = new File([resampledBlob], file.name, {
       type: "audio/wav",
       lastModified: Date.now(),
     });
+    uploadRequest[file.uid] = resampledFile;
   } catch (error) {
-    throw new Error("Error during resampling: " + error.message);
+    console.error("Error during resampling:", error);
+    message.error(`Failed to resample audio file: ${error.message}`);
   }
 };
 

@@ -21,20 +21,22 @@ function Provider({ children }) {
   const [upload, setUpload] = useState(false);
   const [isProcessAudio, setIsProcessAudio] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
+  const [fileList, setFileList] = useState([{}]);
+  const [hover, setHover] = useState(false);
 
   const handleThemeChange = (checked) => {
     setIsDarkMode(checked);
   };
-  const clearFile = () => {
-    setUploadedFile(null);
-    setIsProcessAudio(false);
-  };
+
   return (
     <Context.Provider
       value={{
+        hover,
+        setHover,
+        fileList,
+        setFileList,
         isProcessAudio,
         setIsProcessAudio,
-        clearFile,
         validated,
         isDarkMode,
         setIsDarkMode,

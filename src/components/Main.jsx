@@ -63,7 +63,7 @@ const Input = () => {
                 lg={isProcessAudio ? 6 : 12}
                 className="mb-4"
               >
-                <Converter />
+                <Converter className="zoom-fade-in" />
               </Col>
             )}
           </Row>
