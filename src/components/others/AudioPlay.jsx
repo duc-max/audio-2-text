@@ -176,17 +176,17 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
               />
             </div>
           )}
-          {/* <Select
+          <Select
             value={playbackRate}
             onChange={handlePlaybackRateChange}
-            style={{ width: 58, marginRight: "10px" }}
+            style={{ width: 70, marginRight: "10px" }}
           >
             {playbackRates.map((rate) => (
               <Option key={rate} value={rate}>
                 {rate}x
               </Option>
             ))}
-          </Select> */}
+          </Select>
         </div>
         <div className="audioController">
           <Button onClick={skipBackward} style={{ marginRight: "0.625rem" }}>

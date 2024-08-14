@@ -21,6 +21,33 @@
   position: relative;
 }
 
+.converter-wrapper {
+  max-height: 500px;
+  background: #f2f4f5;
+  padding: 0 24 24 24;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+
+.converter-wrapper::-webkit-scrollbar {
+  width: 8px;
+}
+
+.converter-wrapper::-webkit-scrollbar-track {
+  background: #e0e0e0;
+  border-radius: 10px;
+}
+
+.converter-wrapper::-webkit-scrollbar-thumb {
+  background-color: #888;
+  border-radius: 10px;
+  border: 2px solid #f2f4f5;
+}
+
+.converter-wrapper::-webkit-scrollbar-thumb:hover {
+  background-color: #555;
+}
+
 @media (max-width: 575.98px) {
   .pt-5 {
     padding-top: 1.25rem !important;
