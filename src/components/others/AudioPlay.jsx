@@ -185,7 +185,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
           {/* <Select
             value={playbackRate}
             onChange={handlePlaybackRateChange}
-            style={{ width: 58, marginRight: "10px" }}
+            style={{ width: 70, marginRight: "10px" }}
           >
             {playbackRates.map((rate) => (
               <Option key={rate} value={rate}>

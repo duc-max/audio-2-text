@@ -1,5 +1,5 @@
-import { Layout, theme, Popover, Table, Spin } from "antd";
-import { useContext } from "react";
+import { Layout, theme, Popover, Table, Spin, Progress } from "antd";
+import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Row, Col } from "antd";
 import { RiSpeakLine } from "react-icons/ri";
@@ -27,15 +27,15 @@ function Converter() {
         text: "Invalid",
         emotion: [
           {
-            key: "vui",
+            key: "Happy",
             percent: 10,
           },
           {
-            key: "bình thường",
+            key: "Neutral",
             percent: 50,
           },
           {
-            key: "sợ",
+            key: "Sad",
             percent: 40,
           },
         ],
@@ -45,82 +45,16 @@ function Converter() {
         text: "Invalid",
         emotion: [
           {
-            key: "vui",
+            key: "Happy",
             percent: 10,
           },
           {
-            key: "bình thường",
+            key: "Neutral",
             percent: 50,
           },
           {
-            key: "sợ",
+            key: "Sad",
             percent: 40,
-          },
-        ],
-      },
-      {
-        id: "Invalid",
-        text: "Invalid",
-        emotion: [
-          {
-            key: "vui",
-            percent: 80,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-          {
-            key: "giận",
-            percent: 60,
-          },
-        ],
-      },
-      {
-        id: "Invalid",
-        text: "Invalid",
-        emotion: [
-          {
-            key: "vui",
-            percent: 80,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-          {
-            key: "giận",
-            percent: 60,
-          },
-        ],
-      },
-      {
-        id: "Invalid",
-        text: "Invalid",
-        emotion: [
-          {
-            key: "vui",
-            percent: 80,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-          {
-            key: "giận",
-            percent: 60,
           },
         ],
       },
@@ -133,8 +67,15 @@ function Converter() {
     token: { borderRadiusLG },
   } = theme.useToken();
 
-  const { data, upload, isDarkMode } = useContext(Context);
-  console.log(data);
+  const {
+    data,
+    loading,
+    setLoading,
+    percentage,
+    setPercentage,
+    upload,
+    isDarkMode,
+  } = useContext(Context);
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -162,7 +103,7 @@ function Converter() {
       dataIndex: "key",
       key: "key",
       render: (text) => (
-        <span style={{ color: getEmotionColor(text.trim()), fontSize: 16 }}>
+        <span style={{ color: getEmotionColor(text.trim()), fontSize: "1rem" }}>
           {getEmotionName(text.trim())}
         </span>
       ),
@@ -174,134 +115,139 @@ function Converter() {
     },
   ];
 
+  useEffect(() => {
+    if (loading) {
+      const loadApi = () => {
+        let currentPercentage = 0;
+        const intervalId = setInterval(() => {
+          const increment = 1;
+
+          currentPercentage += increment;
+          if (currentPercentage > 99) {
+            currentPercentage = 99;
+          }
+          setPercentage(currentPercentage);
+          if (upload) {
+            clearInterval(intervalId);
+            setLoading(false);
+          }
+        }, 1000);
+      };
+
+      loadApi();
+    }
+  }, [loading]);
+
   return (
     <Content>
       <div
+        className="converter-wrapper"
         style={{
-          minHeight: 500,
           borderRadius: borderRadiusLG,
           background: "#f2f4f5",
-          padding: "0 24 24 24",
+          padding: "0 1.5rem 1.5rem 1.5rem",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
         }}
       >
         <Row gutter={[16, 16]}>
-          <Col xs={24} sm={24} md={24} style={{}}>
-            {/* <Spin
-              indicator={
-                <LoadingOutlined
+          <Col xs={24} sm={24} md={24}>
+            {loading ? (
+              <div>
+                <p
                   style={{
-                    fontSize: 48,
-                    color: !isDarkMode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)",
+                    margin: "0",
+                    padding: "2px",
+                    fontSize: "16px",
+                    color: isDarkMode ? "#fff" : "#000",
                   }}
-                  spin
+                >
+                  Quá trình xử lý cần thời gian, vui lòng đợi...
+                </p>
+                <Progress
+                  percent={percentage}
+                  className="custom-progress"
+                  strokeColor={
+                    !isDarkMode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)"
+                  }
                 />
-              }
-              spinning={!upload}
-            > */}
+              </div>
+            ) : (
+              ""
+            )}
             <List
               itemLayout="vertical"
               size="default"
               dataSource={data.length == 0 ? data2.object : data}
-              style={{
-                height: "100%",
-                padding: "0.5rem",
-                overflowY: "auto",
-              }}
+              style={{ height: "100%", padding: "0.5rem" }}
               renderItem={(item, i) => (
-                // <Skeleton
-                //   active
-                //   loading={!upload}
-                //   avatar
-                //   paragraph
-                //   style={{ height: "100%" }}
-                //   className="p-8"
-                // >
-                <List.Item
-                  className="fade-in"
-                  key={i}
-                  style={{
-                    marginRight: "0.375rem",
-                    paddingLeft: "0.375rem",
-                    color: isDarkMode ? "#fff" : "#000",
-                  }}
+                <Skeleton
+                  active
+                  loading={!upload}
+                  avatar
+                  paragraph
+                  style={{ height: "100%" }}
+                  className="p-8"
                 >
-                  <List.Item.Meta
+                  <List.Item
+                    className="fade-in"
+                    key={i}
                     style={{
-                      marginBottom: "0.25rem",
+                      marginRight: "0.375rem",
+                      paddingLeft: "0.375rem",
                     }}
-                    avatar={<Avatar src={`../assets/${item.id}.png`} />}
-                    title={
-                      <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
-                        {item.id}
-                      </span>
-                    }
-                  />
-                  <div className="list-audio-wrapper">
-                    <div
-                      className="transcription"
-                      style={{
-                        display: "flex",
-                        alignItems: "center",
-                        fontSize: 18,
-                      }}
-                    >
-                      <span
+                  >
+                    <List.Item.Meta
+                      style={{ marginBottom: "0.25rem" }}
+                      avatar={<Avatar src={`../assets/${item.id}.png`} />}
+                      title={<span> {item.id}</span>}
+                    />
+                    <div className="list-audio-wrapper">
+                      <div
+                        className="transcription"
                         style={{
-                          flexShrink: 0,
-                          paddingRight: "0.5rem",
+                          display: "flex",
+                          alignItems: "center",
+                          fontSize: 1,
                         }}
                       >
-                        <SoundOutlined />
-                      </span>
-                      <span>{item.text}</span>
+                        <span>{item.text}</span>
+                      </div>
+                      <Popover
+                        content={
+                          <Table
+                            columns={emotionColumns}
+                            dataSource={item.emotion}
+                            pagination={false}
+                            size="small"
+                          />
+                        }
+                        title="Chi tiết"
+                        trigger="hover"
+                      >
+                        <span style={{ cursor: "pointer" }}>
+                          {item
+                            ? item?.emotion
+                                .sort((a, b) => b.percent - a.percent)
+                                .slice(0, 2)
+                                .map((e, index) => (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: getEmotionColor(e.key),
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    {e.key + ": " + e.percent + "%"} <br />
+                                  </span>
+                                ))
+                            : "Không có dữ liệu"}
+                        </span>
+                      </Popover>
                     </div>
-                    <Popover
-                      content={
-                        <Table
-                          columns={emotionColumns}
-                          dataSource={item.emotion}
-                          pagination={false}
-                          size="small"
-                        />
-                      }
-                      title="Chi tiết"
-                      trigger="hover"
-                    >
-                      <p
-                        style={{
-                          cursor: "pointer",
-                        }}
-                      >
-                        {item
-                          ? item?.emotion
-                              .sort((a, b) => b.percent - a.percent)
-                              .slice(0, 2)
-                              .map((e, index) => (
-                                <p
-                                  key={index}
-                                  style={{
-                                    color: getEmotionColor(
-                                      getEmotionName(e.key)
-                                    ),
-                                    fontSize: "1rem",
-                                    marginBottom: "0.25rem",
-                                    textAlign: "center",
-                                    justifyContent: "start"
-                                  }}
-                                >
-                                  {e.key}
-                                </p>
-                              ))
-                          : "Không có dữ liệu"}
-                      </p>
-                    </Popover>
-                  </div>
-                </List.Item>
-                // </Skeleton>
+                  </List.Item>
+                </Skeleton>
               )}
             />
-            {/* </Spin> */}
           </Col>
         </Row>
       </div>
