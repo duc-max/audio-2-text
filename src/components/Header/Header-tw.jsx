@@ -25,6 +25,7 @@ import {
   ChevronDownIcon,
   PhoneIcon,
   PlayCircleIcon,
+  ChevronUpIcon,
 } from "@heroicons/react/20/solid";
 import "./Header.css";
 import { Switch } from "antd";
@@ -69,7 +70,8 @@ const callsToAction = [
 
 export default function Headertw() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isDarkMode, handleThemeChange } = useContext(Context);
+  const { isDarkMode, handleThemeChange, hover, setHover } =
+    useContext(Context);
   return (
     <header
       className=" header-container py-1 border-b border-orange-500 rounded"
@@ -109,40 +111,73 @@ export default function Headertw() {
           >
             Giới thiệu
           </a>
-          <Popover className="relative">
-            <PopoverButton
+          {/* <Popover className="relative"> */}
+            {/* <PopoverButton
+              onClick={() => setHover(!hover)}
               className="flex items-center gap-x-1 text-sm font-semibold leading-6 "
               style={{
                 color: !isDarkMode ? "#1f1f1f" : "#fff",
               }}
             >
-              Sản phẩm khác
-              <ChevronDownIcon
-                aria-hidden="true"
-                className="h-5 w-5 flex-none text-gray-400"
-              />
-            </PopoverButton>
+              <a
+                href="#"
+                className="hover:text-[rgb(239,91,30)]  no-underline text-sm font-semibold leading-6 text-gray-900"
+                style={{
+                  color: !isDarkMode ? "#1f1f1f" : "#fff",
+                }}
+              >
+                Sản phẩm khác
+              </a>
 
-            <PopoverPanel
+              {!hover ? (
+                <ChevronDownIcon
+                  onMouseOver={() => console.log("hover")}
+                  aria-hidden="true"
+                  className="h-5 w-5 flex-none text-gray-400"
+                />
+              ) : (
+                <ChevronUpIcon
+                  onMouseOver={() => console.log("hover")}
+                  aria-hidden="true"
+                  className="h-5 w-5 flex-none text-gray-400"
+                />
+              )}
+            </PopoverButton> */}
+
+            {/* <PopoverPanel
               transition
-              className="absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl bg-white shadow-lg ring-1 ring-gray-900/5 transition data-[closed]:translate-y-1 data-[closed]:opacity-0 data-[enter]:duration-200 data-[leave]:duration-150 data-[enter]:ease-out data-[leave]:ease-in"
+              className={`absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl ${
+                isDarkMode ? "bg-zinc-900" : "bg-gray-50"
+              }`}
             >
-              <div className="p-4  overflow-scroll ">
+              <div
+                className={`p-4  overflow-scroll  ${
+                  isDarkMode ? "bg-zinc-900" : "bg-gray-50"
+                } rounded-3xl`}
+              >
                 {products.map((item) => (
                   <div
                     key={item.name}
-                    className="group relative flex items-center gap-x-6 rounded-lg p-1 text-sm leading-6 hover:bg-gray-50"
+                    className="group relative flex items-center gap-x-6 rounded-lg p-1 text-sm leading-6 "
                   >
-                    <div className="flex h-11 w-11 flex-none items-center justify-center rounded-lg bg-gray-50 group-hover:bg-white">
+                    <div
+                      className={`flex h-11 w-11 flex-none items-center justify-center rounded-lg ${
+                        !isDarkMode ? "bg-gray-50" : "bg-[rgb(23,23,23)]"
+                      }  group-hover:bg-white`}
+                    >
                       <item.icon
                         aria-hidden="true"
-                        className="hover:text-[rgb(239,91,30)] h-6 w-6 text-gray-600 group-hover:text-indigo-600"
+                        className=" h-6 w-6 text-gray-600 group-hover:text-[rgb(239,91,30)]  "
                       />
                     </div>
                     <div className="flex-auto">
                       <a
                         href={item.href}
-                        className="hover:text-[rgb(239,91,30)] block font-semibold text-gray-900 no-underline"
+                        className={`hover:text-[rgb(239,91,30)] block font-semibold ${
+                          !isDarkMode
+                            ? "text-gray-900"
+                            : "text-[rgb(255,255,255)]"
+                        } no-underline`}
                       >
                         {item.name}
                         <span className="absolute inset-0" />
@@ -151,8 +186,8 @@ export default function Headertw() {
                     </div>
                   </div>
                 ))}
-              </div>
-              <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+              </div> */}
+              {/* <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
                 {callsToAction.map((item) => (
                   <a
                     key={item.name}
@@ -169,9 +204,9 @@ export default function Headertw() {
                     {item.name}
                   </a>
                 ))}
-              </div>
-            </PopoverPanel>
-          </Popover>
+              </div> */}
+            {/* </PopoverPanel>
+          </Popover> */}
           <a
             href="#"
             className="hover:text-[rgb(239,91,30)] no-underline text-sm font-semibold leading-6 text-gray-900"

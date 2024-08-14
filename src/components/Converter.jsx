@@ -1,8 +1,9 @@
-import { Layout, theme, Popover, Table } from "antd";
-import { useContext } from "react";
+import { Layout, theme, Popover, Table, Spin, Progress } from "antd";
+import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Row, Col } from "antd";
 import { RiSpeakLine } from "react-icons/ri";
+import { LoadingOutlined } from "@ant-design/icons";
 
 import "./Common.css";
 
@@ -26,15 +27,15 @@ function Converter() {
         text: "Invalid",
         emotion: [
           {
-            key: "vui",
+            key: "Happy",
             percent: 10,
           },
           {
-            key: "bình thường",
+            key: "Neutral",
             percent: 50,
           },
           {
-            key: "sợ",
+            key: "Sad",
             percent: 40,
           },
         ],
@@ -44,38 +45,16 @@ function Converter() {
         text: "Invalid",
         emotion: [
           {
-            key: "vui",
+            key: "Happy",
             percent: 10,
           },
           {
-            key: "bình thường",
+            key: "Neutral",
             percent: 50,
           },
           {
-            key: "sợ",
+            key: "Sad",
             percent: 40,
-          },
-        ],
-      },
-      {
-        id: "Invalid",
-        text: "Invalid",
-        emotion: [
-          {
-            key: "vui",
-            percent: 80,
-          },
-          {
-            key: "bình thường",
-            percent: 50,
-          },
-          {
-            key: "sợ",
-            percent: 40,
-          },
-          {
-            key: "giận",
-            percent: 60,
           },
         ],
       },
@@ -88,8 +67,8 @@ function Converter() {
     token: { borderRadiusLG },
   } = theme.useToken();
 
-  const { data, upload } = useContext(Context);
-  console.log(data);
+  const { data, loading, setLoading, percentage, setPercentage, upload } =
+    useContext(Context);
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -129,37 +108,83 @@ function Converter() {
     },
   ];
 
+  useEffect(() => {
+    if (loading) {
+      const loadApi = () => {
+        let currentPercentage = 0;
+        const intervalId = setInterval(() => {
+          const increment = 1;
+
+          currentPercentage += increment;
+          if (currentPercentage > 99) {
+            currentPercentage = 99;
+          }
+          setPercentage(currentPercentage);
+          if (upload) {
+            clearInterval(intervalId);
+            setLoading(false);
+          }
+        }, 1000);
+      };
+
+      loadApi();
+    }
+  }, [loading]);
+
   return (
     <Content>
       <div
+        className="converter-wrapper"
         style={{
-          minHeight: 500,
           borderRadius: borderRadiusLG,
-          background: "#f2f4f5",
-          padding: "0 24 24 24",
         }}
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={24}>
+            {loading ? (
+              <div>
+                <p
+                  style={{
+                    margin: "0",
+                    padding: "2px",
+                    fontSize: "16px",
+                    color: "#595959",
+                  }}
+                >
+                  Quá trình xử lý cần thời gian, vui lòng đợi...
+                </p>
+                <Progress percent={percentage} />
+              </div>
+            ) : (
+              ""
+            )}
             <List
               itemLayout="vertical"
               size="default"
               dataSource={data.length == 0 ? data2.object : data}
-              style={{ height: "100%" }}
+              // dataSource={data2.object}
+              style={{ height: "100%", padding: "0.5rem" }}
               renderItem={(item, i) => (
-                <List.Item key={i} style={{ marginRight: 6, paddingLeft: 6 }}>
-                  <Skeleton
-                    loading={!upload}
-                    active
-                    avatar
-                    paragraph
-                    style={{ height: "100%" }}
-                    className="p-8"
+                <Skeleton
+                  active
+                  loading={!upload}
+                  avatar
+                  paragraph
+                  style={{ height: "100%" }}
+                  className="p-8"
+                >
+                  <List.Item
+                    className="fade-in"
+                    key={i}
+                    style={{
+                      marginRight: "0.375rem",
+                      paddingLeft: "0.375rem",
+                    }}
                   >
                     <List.Item.Meta
                       style={{ marginBottom: "0.25rem" }}
                       avatar={<Avatar src={`../assets/${item.id}.png`} />}
-                      title={<span>Person: {item.id}</span>}
+                      title={<span> {item.id}</span>}
                     />
                     <div className="list-audio-wrapper">
                       <div
@@ -170,14 +195,6 @@ function Converter() {
                           fontSize: 18,
                         }}
                       >
-                        <span
-                          style={{
-                            flexShrink: 0,
-                            paddingRight: "0.5rem",
-                          }}
-                        >
-                          <RiSpeakLine />
-                        </span>
                         <span>{item.text}</span>
                       </div>
                       <Popover
@@ -205,16 +222,15 @@ function Converter() {
                                       fontSize: 16,
                                     }}
                                   >
-                                    {e.key}
-                                    {index < 1 ? ", " : ""}
+                                    {e.key + ": " + e.percent + "%"} <br />
                                   </span>
                                 ))
                             : "Không có dữ liệu"}
                         </span>
                       </Popover>
                     </div>
-                  </Skeleton>
-                </List.Item>
+                  </List.Item>
+                </Skeleton>
               )}
             />
           </Col>

@@ -125,12 +125,11 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
         width: "100%",
         padding: "1.25rem 1.25rem 0 1.25rem",
         textAlign: "center",
-        backgroundColor: isDarkmode ? "#1f1f1f" : "#ffff",
       }}
     >
       <WavesurferPlayer
         height={100}
-        waveColor={isDarkmode ? "#ef5b1e" : "#6666ff"}
+        waveColor={!isDarkmode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)"}
         url={audioSrc}
         onReady={onReady}
         onPlay={() => setPlaying(true)}
