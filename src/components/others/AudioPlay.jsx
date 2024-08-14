@@ -27,7 +27,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
     setPlaybackRate,
     sliderVisible,
     setSliderVisible,
-    isDarkmode,
+    isDarkMode,
   } = useContext(Context);
   const [wavesurfer, setWavesurfer] = useState(null);
   const volumeControlRef = useRef(null);
@@ -125,20 +125,26 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
         width: "100%",
         padding: "1.25rem 1.25rem 0 1.25rem",
         textAlign: "center",
+        backgroundColor: isDarkMode ? "#1f1f1f" : "#ffff",
       }}
     >
       <WavesurferPlayer
         height={100}
-        waveColor={!isDarkmode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)"}
+        waveColor={!isDarkMode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)"}
         url={audioSrc}
         onReady={onReady}
         onPlay={() => setPlaying(true)}
         onPause={() => setPlaying(false)}
       />
 
-      <Title level={4}>{fileName}</Title>
+      <Title
+        level={4}
+        style={{color : isDarkMode ? "#fff" : "#000"}}
+      >
+        {fileName}
+      </Title>
 
-      <div style={{ marginBottom: "0.625rem" }}>
+      <div style={{ marginBottom: "0.625rem",color : isDarkMode ? "#fff" : "#000" }}>
         {new Date(currentTime * 1000).toISOString().substr(11, 8)} /{" "}
         {new Date(duration * 1000).toISOString().substr(11, 8)}
       </div>
