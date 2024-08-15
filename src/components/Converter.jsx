@@ -1,9 +1,7 @@
-import { Layout, theme, Popover, Table, Spin, Progress } from "antd";
+import { Layout, theme, Popover, Table, Progress } from "antd";
 import { useContext, useEffect } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Row, Col } from "antd";
-import { RiSpeakLine } from "react-icons/ri";
-import { SoundOutlined } from "@ant-design/icons";
 
 import "./Common.css";
 
