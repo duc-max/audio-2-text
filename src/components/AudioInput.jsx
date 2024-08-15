@@ -12,11 +12,7 @@ import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
 import AudioPlayer from "./others/AudioPlay";
 import { Context } from "../context/Context";
 import { handleChange } from "../funcs/fileInputHandler";
-import {
-  // resampleAudioFile,
-  // validateFile,
-  uploadRequest,
-} from "../funcs/fileResampler.js";
+import { resampleAudioFile, uploadRequest } from "../funcs/fileResampler.js";
 const { Content } = Layout;
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -46,30 +42,20 @@ function AudioInput() {
     accept: "audio/*",
     disabled: uploadedFile ? true : false,
     // The main beforeUpload function with integrated error handling
-    // beforeUpload: async (file) => {
-    //   if (!validateFile(file)) {
-    //     return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-    //   }
-
-    //   try {
-    //     const resampledFile = await resampleAudioFile(file);
-    //     uploadRequest[file.uid] = resampledFile;
-    //     return resampledFile;
-    //   } catch (error) {
-    //     console.error(error);
-    //     message.error(`Failed to resample audio file: ${error.message}`);
-    //     return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-    //   }
-    // },
+    beforeUpload: async (file) => {
+      try {
+        const resampledFile = await resampleAudioFile(file);
+        uploadRequest[file.uid] = resampledFile;
+        return resampledFile;
+      } catch (error) {
+        console.error(error);
+        message.error(`Failed to resample audio file: ${error.message}`);
+        return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+      }
+    },
 
     onChange: (info) =>
-      handleChange(
-        info,
-        setUploadedFile,
-        setUpload,
-        setData,
-        data,
-      ),
+      handleChange(info, setUploadedFile, setUpload, setData, data),
     onRemove: (file) => {
       console.log("removed:", file.name);
       if (uploadRequest[file.uid]) {

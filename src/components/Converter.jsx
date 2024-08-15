@@ -133,7 +133,6 @@ function Converter() {
           }
         }, 1000);
 
-        // Cleanup function to clear the interval
         return () => clearInterval(intervalId);
       };
 
