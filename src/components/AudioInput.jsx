@@ -35,13 +35,17 @@ function AudioInput() {
     setValidated,
     validated,
     setPercentage,
+    setLoading,
   } = useContext(Context);
   const clearFile = () => {
     setPercentage(0);
     setData([]);
     setUploadedFile(null);
     setIsProcessAudio(false);
+    setUpload(false);
+    setLoading(true);
     setValidated(false);
+
   };
   const props = {
     name: "file",
@@ -63,6 +67,7 @@ function AudioInput() {
       }
     },
 
+
     onChange: (info) => {
       if (!fileValidator(info.file)) {
         setValidated(false);
@@ -78,6 +83,7 @@ function AudioInput() {
       }
     },
   };
+
   return (
     <Content
       style={{
