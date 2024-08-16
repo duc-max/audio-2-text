@@ -1,5 +1,5 @@
 import { Layout, theme, Popover, Table, Progress } from "antd";
-import { useContext, useEffect } from "react";
+import { useContext, useEffect, useLayoutEffect, useRef } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Skeleton, Row, Col } from "antd";
 
@@ -16,51 +16,6 @@ const colors = {
 };
 
 function Converter() {
-  const data2 = {
-    status: 0,
-    statusCode: 200,
-    object: [
-      {
-        id: "Invalid",
-        text: "Invalid",
-        emotion: [
-          {
-            key: "Happy",
-            percent: 10,
-          },
-          {
-            key: "Neutral",
-            percent: 50,
-          },
-          {
-            key: "Sad",
-            percent: 40,
-          },
-        ],
-      },
-      {
-        id: "Invalid",
-        text: "Invalid",
-        emotion: [
-          {
-            key: "Happy",
-            percent: 10,
-          },
-          {
-            key: "Neutral",
-            percent: 50,
-          },
-          {
-            key: "Sad",
-            percent: 40,
-          },
-        ],
-      },
-    ],
-    isOk: true,
-    isError: false,
-  };
-
   const {
     token: { borderRadiusLG },
   } = theme.useToken();
@@ -73,6 +28,7 @@ function Converter() {
     setPercentage,
     upload,
     isDarkMode,
+    setUpload,
   } = useContext(Context);
 
   const getEmotionColor = (emotion) => {
@@ -113,28 +69,51 @@ function Converter() {
     },
   ];
 
-  useEffect(() => {
+  const currentPercentageRef = useRef(0);
+  // const uploadRef = useRef(false);
+  useLayoutEffect(() => {
     if (loading) {
-      const loadApi = () => {
-        let currentPercentage = 0;
-        const intervalId = setInterval(() => {
-          const increment = 1;
-
-          currentPercentage += increment;
-          if (currentPercentage > 99) {
-            currentPercentage = 99;
+      const intervalId = setInterval(() => {
+        let increment;
+        if (!upload) {
+          increment = Math.floor(Math.random() * 5) + 1;
+          currentPercentageRef.current += increment;
+          if (currentPercentageRef.current >= 100) {
+            currentPercentageRef.current = 99;
           }
-          setPercentage(currentPercentage);
-          if (upload) {
+        } else {
+          increment = 30;
+          currentPercentageRef.current += increment;
+          if (currentPercentageRef.current >= 100) {
+            currentPercentageRef.current = 100;
             clearInterval(intervalId);
-            setLoading(false);
+            setTimeout(() => {
+              setLoading(false);
+              currentPercentageRef.current = 0;
+            }, 1000);
           }
-        }, 1000);
-      };
+        }
+        setPercentage(currentPercentageRef.current);
+      }, 1000);
 
-      loadApi();
+      return () => {
+        clearInterval(intervalId);
+        setLoading(true);
+        setUpload(false);
+        currentPercentageRef.current = 0;
+      };
     }
-  }, [loading]);
+  }, [loading, upload]);
+
+  // useEffect(() => {
+  //   if (upload) {
+  //     if (uploadRef.current) {
+
+  //     } else {
+  //       uploadRef.current = true;
+  //     }
+  //   }
+  // }, [upload]);
 
   return (
     <Content>
@@ -172,80 +151,84 @@ function Converter() {
             ) : (
               ""
             )}
-            <List
-              itemLayout="vertical"
-              size="default"
-              dataSource={data.length == 0 ? data2.object : data}
-              style={{ height: "100%", padding: "0.5rem" }}
-              renderItem={(item, i) => (
-                <Skeleton
-                  active
-                  loading={!upload}
-                  avatar
-                  paragraph
-                  style={{ height: "100%" }}
-                  className="p-8"
-                >
-                  <List.Item
-                    className="fade-in"
-                    key={i}
-                    style={{
-                      marginRight: "0.375rem",
-                      paddingLeft: "0.375rem",
-                    }}
+            {data && data.length > 0 ? (
+              <List
+                className="fade-in-result"
+                itemLayout="vertical"
+                size="default"
+                dataSource={data}
+                style={{ height: "100%", padding: "0.5rem" }}
+                renderItem={(item, i) => (
+                  <Skeleton
+                    active
+                    loading={!upload}
+                    avatar
+                    paragraph
+                    style={{ height: "100%" }}
+                    className="p-8"
                   >
-                    <List.Item.Meta
-                      style={{ marginBottom: "0.25rem" }}
-                      avatar={<Avatar src={`../assets/${item.id}.png`} />}
-                      title={<span> {item.id}</span>}
-                    />
-                    <div className="list-audio-wrapper">
-                      <div
-                        className="transcription"
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          fontSize: 1,
-                        }}
-                      >
-                        <span>{item.text}</span>
+                    <List.Item
+                      className="fade-in"
+                      key={i}
+                      style={{
+                        marginRight: "0.375rem",
+                        paddingLeft: "0.375rem",
+                      }}
+                    >
+                      <List.Item.Meta
+                        style={{ marginBottom: "0.25rem" }}
+                        avatar={<Avatar src={`../assets/${item.id}.png`} />}
+                        title={<span> {item.id}</span>}
+                      />
+                      <div className="list-audio-wrapper">
+                        <div
+                          className="transcription"
+                          style={{
+                            display: "flex",
+                            alignItems: "center",
+                            fontSize: 1,
+                          }}
+                        >
+                          <span>{item.text}</span>
+                        </div>
+                        <Popover
+                          content={
+                            <Table
+                              columns={emotionColumns}
+                              dataSource={item.emotion}
+                              pagination={false}
+                              size="small"
+                            />
+                          }
+                          title="Chi tiết"
+                          trigger="hover"
+                        >
+                          <span style={{ cursor: "pointer" }}>
+                            {item
+                              ? item?.emotion
+                                  .sort((a, b) => b.percent - a.percent)
+                                  .slice(0, 2)
+                                  .map((e, index) => (
+                                    <span
+                                      key={index}
+                                      style={{
+                                        color: getEmotionColor(e.key),
+                                        fontSize: 16,
+                                      }}
+                                    >
+                                      {e.key + ": " + e.percent + "%"} <br />
+                                    </span>
+                                  ))
+                              : "Không có dữ liệu"}
+                          </span>
+                        </Popover>
                       </div>
-                      <Popover
-                        content={
-                          <Table
-                            columns={emotionColumns}
-                            dataSource={item.emotion}
-                            pagination={false}
-                            size="small"
-                          />
-                        }
-                        title="Chi tiết"
-                        trigger="hover"
-                      >
-                        <span style={{ cursor: "pointer" }}>
-                          {item
-                            ? item?.emotion
-                                .sort((a, b) => b.percent - a.percent)
-                                .slice(0, 2)
-                                .map((e, index) => (
-                                  <span
-                                    key={index}
-                                    style={{
-                                      color: getEmotionColor(e.key),
-                                      fontSize: 16,
-                                    }}
-                                  >
-                                    {e.key + ": " + e.percent + "%"} <br />
-                                  </span>
-                                ))
-                            : "Không có dữ liệu"}
-                        </span>
-                      </Popover>
-                    </div>
-                  </List.Item>
-                </Skeleton>
-              )}
-            />
+                    </List.Item>
+                  </Skeleton>
+                )}
+              />
+            ) : null}{" "}
+            {/* Return null or an empty fragment when data is empty */}
           </Col>
         </Row>
       </div>

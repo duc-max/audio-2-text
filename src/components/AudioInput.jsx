@@ -30,15 +30,11 @@ function AudioInput() {
     setUpload,
     setData,
     data,
-    fileList,
-    setFileList,
+    setPercentage,
   } = useContext(Context);
-  const clearFile = (file) => {
-    if (uploadRequest[file.uid]) {
-      delete uploadRequest[file.uid];
-      message.info(`${file.name} upload has been cancelled.`);
-      console.log(uploadRequest[file.uid]);
-    }
+  const clearFile = () => {
+    setPercentage(0);
+    setData([]);
     setUploadedFile(null);
     setIsProcessAudio(false);
   };
@@ -73,8 +69,10 @@ function AudioInput() {
         setUpload,
         setData,
         data,
-        setFileList
+
+        setPercentage
       ),
+
     onRemove: (file) => {
       console.log("removed:", file.name);
       if (uploadRequest[file.uid]) {
@@ -84,6 +82,7 @@ function AudioInput() {
       }
     },
   };
+
   return (
     <Content
       style={{
@@ -111,9 +110,7 @@ function AudioInput() {
             <div style={{ textAlign: "center", marginTop: "1.25rem" }}>
               <Button
                 onClick={() => {
-                  if (fileList.length > 0) {
-                    clearFile(fileList[0]);
-                  }
+                  clearFile();
                 }}
                 style={{
                   marginRight: "0.625rem",

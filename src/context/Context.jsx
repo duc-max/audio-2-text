@@ -21,7 +21,6 @@ function Provider({ children }) {
   const [upload, setUpload] = useState(false);
   const [isProcessAudio, setIsProcessAudio] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
-  const [fileList, setFileList] = useState([{}]);
   const [hover, setHover] = useState(false);
 
   const handleThemeChange = (checked) => {
@@ -33,8 +32,6 @@ function Provider({ children }) {
       value={{
         hover,
         setHover,
-        fileList,
-        setFileList,
         isProcessAudio,
         setIsProcessAudio,
         validated,
