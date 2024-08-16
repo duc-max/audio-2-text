@@ -132,9 +132,12 @@ function Converter() {
             setLoading(false);
           }
         }, 1000);
+
+        return () => clearInterval(intervalId);
       };
 
-      loadApi();
+      const cleanup = loadApi();
+      return cleanup;
     }
   }, [loading]);
 

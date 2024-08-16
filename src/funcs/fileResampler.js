@@ -1,105 +1,140 @@
-// Function to validate the file
 import { message } from "antd";
-import fileValidator from "./fileValidator";
 import { create, ConverterType } from "@alexanderolsen/libsamplerate-js";
+import fileValidator from "./fileValidator";
 
 const uploadRequest = {};
-
-const validateFile = (file) => {
-  if (fileValidator(file) === false) {
-    file.status = "error";
-    message.error(
-      "Invalid file type or size. Please upload an audio file that is less than 7MB."
-    );
-    return false;
-  }
-  return true;
-};
-
-// Function to resample the audio file
 const resampleAudioFile = async (file) => {
   try {
-    const maxSizeMB = 7;
-    const maxSizeBytes = maxSizeMB * 1024 * 1024;
+    if (!fileValidator(file)) {
+      console.log(
+        "Invalid file type or size. Please upload an audio file that is less than 7MB."
+      );
 
-    if (file.size > maxSizeBytes) {
       throw new Error(
-        `File size exceeds ${maxSizeMB}MB. Please upload a smaller file.`
+        "Invalid file type or size. Please upload an audio file that is less than 7MB."
       );
     }
-
     const arrayBuffer = await file.arrayBuffer();
-
-    // Use the Web Audio API to decode the audio data and get the sample rate
     const audioContext = new (window.AudioContext ||
       window.webkitAudioContext)();
     const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
     const inputSampleRate = audioBuffer.sampleRate;
 
-    if (inputSampleRate !== 96000) {
-      throw new Error("Input file must have a sample rate of 96kHz.");
-    }
+    console.log(`Input sample rate: ${inputSampleRate} Hz`);
 
-    // Resampling parameters
     const converterType = ConverterType.SRC_SINC_BEST_QUALITY;
     const nChannels = audioBuffer.numberOfChannels;
-    const outputSampleRate = 16000;
+    const outputSampleRate = 16000; // Target sample rate: 16kHz
 
-    // Create resampler
     const src = await create(nChannels, inputSampleRate, outputSampleRate, {
       converterType: converterType,
     });
 
-    // Resample each channel
     const resampledChannels = [];
+
     for (let channel = 0; channel < nChannels; channel++) {
       const audioData = audioBuffer.getChannelData(channel);
       const resampledData = src.simple(audioData);
       resampledChannels.push(resampledData);
     }
-    src.destroy(); // Clean up
 
-    // Combine resampled data into a single array (if multi-channel)
+    src.destroy();
+
+    // Combine resampled data into a single array
     let combinedResampledData;
     if (nChannels === 1) {
       combinedResampledData = resampledChannels[0];
     } else {
-      const length = resampledChannels[0].length;
-      combinedResampledData = new Float32Array(length * nChannels);
+      const maxLength = Math.max(
+        ...resampledChannels.map((channel) => channel.length)
+      );
+      combinedResampledData = new Float32Array(maxLength * nChannels);
       for (let channel = 0; channel < nChannels; channel++) {
-        combinedResampledData.set(resampledChannels[channel], channel * length);
+        for (let i = 0; i < resampledChannels[channel].length; i++) {
+          combinedResampledData[i * nChannels + channel] =
+            resampledChannels[channel][i];
+        }
       }
     }
-
-    // Debugging logs
-    console.log(
-      "Combined Resampled Data Length:",
-      combinedResampledData.length
-    );
 
     // Convert Float32Array to Int16Array for WAV format
     const int16Data = new Int16Array(combinedResampledData.length);
     for (let i = 0; i < combinedResampledData.length; i++) {
       int16Data[i] =
-        Math.max(-1, Math.min(1, combinedResampledData[i])) * 0x7fff; // Convert to 16-bit PCM
+        Math.max(-1, Math.min(1, combinedResampledData[i])) * 0x7fff;
     }
 
-    // Create a new Blob from the resampled data
-    const resampledBlob = new Blob([int16Data.buffer], {
+    // Create WAV file header
+    const wavHeader = createWavHeader(
+      int16Data.length * 2,
+      nChannels,
+      outputSampleRate
+    );
+
+    // Combine header and audio data
+    const wavBlob = new Blob([wavHeader, int16Data.buffer], {
       type: "audio/wav",
     });
 
-    // Create a new File object from the resampled Blob
-    const resampledFile = new File([resampledBlob], file.name, {
-      type: "audio/wav",
-      lastModified: Date.now(),
-    });
+    // Create a new File object from the WAV Blob
+    const resampledFile = new File(
+      [wavBlob],
+      file.name.replace(/\.[^/.]+$/, ".wav"),
+      {
+        type: "audio/wav",
+        lastModified: Date.now(),
+      }
+    );
+
     uploadRequest[file.uid] = resampledFile;
+    console.log(`Resampled to ${outputSampleRate} Hz`);
+    return resampledFile;
   } catch (error) {
     console.error("Error during resampling:", error);
     message.error(`Failed to resample audio file: ${error.message}`);
+    throw error;
   }
 };
 
-// Function to handle file upload errors
-export { validateFile, resampleAudioFile, uploadRequest };
+// Function to create a WAV file header
+function createWavHeader(dataLength, numChannels, sampleRate) {
+  const buffer = new ArrayBuffer(44);
+  const view = new DataView(buffer);
+
+  // RIFF identifier
+  writeString(view, 0, "RIFF");
+  // File length
+  view.setUint32(4, 36 + dataLength, true);
+  // RIFF type
+  writeString(view, 8, "WAVE");
+  // Format chunk identifier
+  writeString(view, 12, "fmt ");
+  // Format chunk length
+  view.setUint32(16, 16, true);
+  // Sample format (PCM)
+  view.setUint16(20, 1, true);
+  // Channel count
+  view.setUint16(22, numChannels, true);
+  // Sample rate
+  view.setUint32(24, sampleRate, true);
+  // Byte rate (sample rate * block align)
+  view.setUint32(28, sampleRate * numChannels * 2, true);
+  // Block align (channel count * bytes per sample)
+  view.setUint16(32, numChannels * 2, true);
+  // Bits per sample
+  view.setUint16(34, 16, true);
+  // Data chunk identifier
+  writeString(view, 36, "data");
+  // Data chunk length
+  view.setUint32(40, dataLength, true);
+
+  return buffer;
+}
+
+function writeString(view, offset, string) {
+  for (let i = 0; i < string.length; i++) {
+    view.setUint8(offset + i, string.charCodeAt(i));
+  }
+}
+
+export { resampleAudioFile, uploadRequest };
