@@ -34,7 +34,10 @@ function Converter() {
     setPercentage,
     upload,
     isDarkMode,
+    setUpload,
   } = useContext(Context);
+
+  const [uploadCount, setUploadCount] = useState(0); // New state to track the number of uploads
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -76,6 +79,7 @@ function Converter() {
   ];
 
   const currentPercentageRef = useRef(0);
+  const uploadRef = useRef(false);
   useEffect(() => {
     if (loading) {
       const intervalId = setInterval(() => {
