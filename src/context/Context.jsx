@@ -22,7 +22,6 @@ function Provider({ children }) {
   const [isProcessAudio, setIsProcessAudio] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hover, setHover] = useState(false);
-
   const handleThemeChange = (checked) => {
     setIsDarkMode(checked);
   };
