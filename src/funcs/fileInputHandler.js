@@ -15,7 +15,7 @@ const handleFileUploadProcessing = (
   setUploadedFile,
   setUpload,
   setData,
-  data,
+  data
 ) => {
   const { status } = info.file;
 

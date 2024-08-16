@@ -112,7 +112,7 @@ export default function Headertw() {
             Giới thiệu
           </a>
           {/* <Popover className="relative"> */}
-            {/* <PopoverButton
+          {/* <PopoverButton
               onClick={() => setHover(!hover)}
               className="flex items-center gap-x-1 text-sm font-semibold leading-6 "
               style={{
@@ -144,7 +144,7 @@ export default function Headertw() {
               )}
             </PopoverButton> */}
 
-            {/* <PopoverPanel
+          {/* <PopoverPanel
               transition
               className={`absolute -left-8 top-full z-10 mt-3 w-screen max-w-md overflow-hidden rounded-3xl ${
                 isDarkMode ? "bg-zinc-900" : "bg-gray-50"
@@ -187,7 +187,7 @@ export default function Headertw() {
                   </div>
                 ))}
               </div> */}
-              {/* <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
+          {/* <div className="grid grid-cols-2 divide-x divide-gray-900/5 bg-gray-50">
                 {callsToAction.map((item) => (
                   <a
                     key={item.name}
@@ -205,7 +205,7 @@ export default function Headertw() {
                   </a>
                 ))}
               </div> */}
-            {/* </PopoverPanel>
+          {/* </PopoverPanel>
           </Popover> */}
           <a
             href="#"
@@ -220,8 +220,8 @@ export default function Headertw() {
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Switch
             style={{ backgroundColor: isDarkMode ? "#ef5b1e" : "" }}
-            checkedChildren="Tối"
-            unCheckedChildren="Sáng"
+            checkedChildren="Sáng"
+            unCheckedChildren="Tối  "
             onChange={handleThemeChange}
             checked={isDarkMode}
           />
@@ -314,8 +314,8 @@ export default function Headertw() {
               <div className="py-6">
                 <Switch
                   style={{ backgroundColor: isDarkMode ? "#ef5b1e" : "" }}
-                  checkedChildren="Tối"
-                  unCheckedChildren="Sáng"
+                  checkedChildren="Sáng"
+                  unCheckedChildren="Tối"
                   onChange={handleThemeChange}
                   checked={isDarkMode}
                 />
