@@ -6,11 +6,14 @@ const uploadRequest = {};
 const resampleAudioFile = async (file) => {
   try {
     if (!fileValidator(file)) {
+      console.log(
+        "Invalid file type or size. Please upload an audio file that is less than 7MB."
+      );
+
       throw new Error(
         "Invalid file type or size. Please upload an audio file that is less than 7MB."
       );
     }
-
     const arrayBuffer = await file.arrayBuffer();
     const audioContext = new (window.AudioContext ||
       window.webkitAudioContext)();
