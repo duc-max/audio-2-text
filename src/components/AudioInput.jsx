@@ -9,6 +9,8 @@ import {
   message,
   Spin,
 } from "antd";
+import https from "https";
+import axios from "axios";
 import {
   InboxOutlined,
   UploadOutlined,
@@ -45,7 +47,6 @@ function AudioInput() {
     setUpload(false);
     setLoading(true);
     setValidated(false);
-
   };
   const props = {
     name: "file",
@@ -54,6 +55,7 @@ function AudioInput() {
     method: "POST",
     accept: "audio/*",
     disabled: uploadedFile ? true : false,
+
     // The main beforeUpload function with integrated error handling
     beforeUpload: async (file) => {
       setValidated(true);
@@ -67,7 +69,35 @@ function AudioInput() {
       }
     },
 
+    customRequest: async ({ file, onSuccess, onError }) => {
+      const formData = new FormData();
+      formData.append("file", file);
 
+      const axiosConfig = {
+        method: "post",
+        url: "https://192.168.93.55:5001/api/FileUpload/upload",
+        data: formData,
+        headers: {
+          "Content-Type": "multipart/form-data",
+          "Access-Control-Allow-Origin": "*",
+        },
+        httpsAgent: new https.Agent({
+          rejectUnauthorized: false,
+        }),
+      };
+
+      try {
+        const response = await axios(axiosConfig);
+
+        if (response.status === 200) {
+          onSuccess(response, file);
+        } else {
+          onError(new Error("Upload failed"));
+        }
+      } catch (error) {
+        onError(error);
+      }
+    },
     onChange: (info) => {
       if (!fileValidator(info.file)) {
         setValidated(false);
@@ -117,6 +147,7 @@ function AudioInput() {
                   marginRight: "0.625rem",
                   color: isDarkMode ? "#000" : "inherit",
                 }}
+                size="small"
               >
                 Xóa
               </Button>

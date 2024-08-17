@@ -52,7 +52,7 @@ const Input = () => {
             Chuyển Đổi Âm Thanh Thành Văn Bản
           </Title>
           <Row className="pt-0 d-flex justify-content-center align-items-center">
-            <Col xs={12} sm={12} md={6} lg={6} className="mb-4 pt-10">
+            <Col xs={12} sm={12} md={6} lg={6} className="mb-4">
               <AudioInput />
             </Col>
             {isProcessAudio && (
@@ -61,7 +61,7 @@ const Input = () => {
                 sm={12}
                 md={isProcessAudio ? 6 : 12}
                 lg={isProcessAudio ? 6 : 12}
-                className="mb-4"
+                className="mb-4 pt-10"
               >
                 <Converter className="zoom-fade-in" />
               </Col>
