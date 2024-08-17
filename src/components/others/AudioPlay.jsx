@@ -194,7 +194,7 @@ const AudioPlayer = ({ audioSrc, fileName }) => {
             ))}
           </Select> */}
         </div>
-        <div className="audioController">
+        <div className="audioController" >
           <Button onClick={skipBackward} style={{ marginRight: "0.625rem" }}>
             <IoMdSkipBackward />
           </Button>

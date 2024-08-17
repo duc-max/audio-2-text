@@ -1,13 +1,17 @@
-import { Layout, theme, Popover, Table, Progress } from "antd";
 import {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+  Layout,
+  theme,
+  Popover,
+  Table,
+  Progress,
+  Skeleton,
+  Tooltip,
+} from "antd";
+import { useContext, useEffect, useRef } from "react";
+import { SoundOutlined } from "@ant-design/icons";
 import { Context } from "../context/Context";
 import { Avatar, List, Row, Col } from "antd";
+import AudioSegment from "./others/AudioSegments";
 
 import "./Common.css";
 
@@ -20,7 +24,126 @@ const colors = {
   Angry: "#f5222d",
   Anxiety: "#ffc53d",
 };
-
+const data2 = {
+  status: 0,
+  statusCode: 200,
+  object: [
+    {
+      id: "SPEAKER_01",
+      text: " thứ hai của anh là.",
+      fromTime: 110,
+      toTime: 1010,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 0.19,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 99.8,
+        },
+        {
+          key: " Sad",
+          percent: 0.01,
+        },
+        {
+          key: " Neutral",
+          percent: 0,
+        },
+      ],
+    },
+    {
+      id: "SPEAKER_00",
+      text: " thế của anh là.",
+      fromTime: 110,
+      toTime: 1130,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 0.05,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 99.95,
+        },
+        {
+          key: " Sad",
+          percent: 0,
+        },
+        {
+          key: " Neutral",
+          percent: 0,
+        },
+      ],
+    },
+    {
+      id: "SPEAKER_00",
+      text: " nắng nóng nóng nóng nóng phủ.",
+      fromTime: 4490,
+      toTime: 6630,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 1.62,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 96.14,
+        },
+        {
+          key: " Sad",
+          percent: 2.08,
+        },
+        {
+          key: " Neutral",
+          percent: 0.16,
+        },
+      ],
+    },
+    {
+      id: "SPEAKER_01",
+      text: " nóng nóng nóng.",
+      fromTime: 4750,
+      toTime: 6120,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 85.28,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 10.83,
+        },
+        {
+          key: " Sad",
+          percent: 3.89,
+        },
+        {
+          key: " Neutral",
+          percent: 0,
+        },
+      ],
+    },
+  ],
+  isOk: true,
+  isError: false,
+};
 function Converter() {
   const {
     token: { borderRadiusLG },
@@ -31,13 +154,11 @@ function Converter() {
     loading,
     setLoading,
     percentage,
+    uploadedFile,
     setPercentage,
     upload,
     isDarkMode,
-    setUpload,
   } = useContext(Context);
-
-  const [uploadCount, setUploadCount] = useState(0); // New state to track the number of uploads
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -79,7 +200,6 @@ function Converter() {
   ];
 
   const currentPercentageRef = useRef(0);
-  const uploadRef = useRef(false);
   useEffect(() => {
     if (loading) {
       const intervalId = setInterval(() => {
@@ -123,7 +243,7 @@ function Converter() {
       >
         <Row gutter={[16, 16]}>
           <Col xs={24} sm={24} md={24}>
-            {loading && (
+            {/* {loading && (
               <div>
                 <p
                   style={{
@@ -131,6 +251,7 @@ function Converter() {
                     padding: "2px",
                     fontSize: "16px",
                     color: isDarkMode ? "#fff" : "#000",
+                    backgroundColor: "transparent",
                   }}
                 >
                   Quá trình xử lý cần thời gian, vui lòng đợi...
@@ -142,13 +263,22 @@ function Converter() {
                     !isDarkMode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)"
                   }
                 />
+                <Skeleton
+                  active
+                  style={{ marginTop: "0.625rem" }}
+                  paragraph={{ rows: 3 }}
+                  title
+                  avatar
+                />
               </div>
-            )}
-            {data && data.length > 0 && !loading && (
+            )} */}
+            {/* && !loading  */}
+            {data2 && data2.object.length > 0 && (
               <List
+                bordered
                 itemLayout="vertical"
-                size="default"
-                dataSource={data}
+                size="small"
+                dataSource={data2.object}
                 style={{ height: "100%", padding: "0.5rem" }}
                 renderItem={(item, i) => (
                   <List.Item
@@ -165,20 +295,74 @@ function Converter() {
                         marginBottom: "0.25rem",
                         color: isDarkMode ? "#fff" : "#000",
                       }}
-                      avatar={<Avatar src={`../assets/${item.id}.png`} />}
+                      avatar={
+                        <Avatar
+                          src={`https://api.dicebear.com/9.x/bottts-neutral/svg?seed=${item.id}`}
+                        />
+                      }
                       title={
-                        <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
+                        <span
+                          style={{
+                            color: isDarkMode ? "#fff" : "#000",
+                          }}
+                        >
                           {item.id}
                         </span>
                       }
                     />
                     <div
                       className="list-audio-wrapper"
-                      style={{ color: isDarkMode ? "#fff" : "#000" }}
+                      style={{
+                        color: isDarkMode ? "#fff" : "#000",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "space-evenly",
+                      }}
                     >
-                      <div className="transcription">
-                        <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
-                          {item.text}
+                      <div
+                        className="transcription"
+                        style={{
+                          marginRight: "20px",
+                        }}
+                      >
+                        <span
+                          style={{
+                            color: isDarkMode ? "#fff" : "#000",
+                            wordBreak: "break-all",
+                          }}
+                        >
+                          <div>
+                            <SoundOutlined />
+                            <Popover
+                              style={{ color: !isDarkMode ? "#fff" : "#000" }}
+                              color={isDarkMode ? "#1f1f1f" : "#ffff"}
+                              content={() => (
+                                <div>
+                                  <AudioSegment
+                                    key={item.id}
+                                    itemId={item.id}
+                                    fromTime={item.fromTime}
+                                    toTime={item.toTime}
+                                  />
+                                </div>
+                              )}
+                              title={`Đoạn từ ${item.fromTime / 1000} giây - ${
+                                item.toTime / 1000
+                              } giây`}
+                              trigger="click"
+                            >
+                              <Tooltip title="Nhấn để nghe lại">
+                                <span
+                                  style={{
+                                    cursor: "pointer",
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {item.text}
+                                </span>
+                              </Tooltip>
+                            </Popover>
+                          </div>
                         </span>
                       </div>
                       <Popover
@@ -202,16 +386,25 @@ function Converter() {
                                 key={index}
                                 style={{
                                   color: getEmotionColor(e.key.trim()),
-                                  fontSize: 16,
+                                  fontSize: "1rem",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  width: "7.5rem",
+                                  alignItems: "center",
                                 }}
                               >
-                                {getEmotionName(e.key.trim()) +
-                                  ": " +
-                                  e.percent +
-                                  "%"}{" "}
-                                <br />
+                                <span>{getEmotionName(e.key.trim())}</span>
+                                <span
+                                  style={{
+                                    flex: "1 1 auto",
+                                    minWidth: "50%",
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  {": " + e.percent + "%"}
+                                </span>
                               </span>
-                            )) || "Không có dữ liệu"}
+                            ))}
                         </span>
                       </Popover>
                     </div>
