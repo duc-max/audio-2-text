@@ -22,6 +22,9 @@ function Provider({ children }) {
   const [isProcessAudio, setIsProcessAudio] = useState(false);
   const [isDarkMode, setIsDarkMode] = useState(false);
   const [hover, setHover] = useState(false);
+  const [wavesurfer, setWavesurfer] = useState(null);
+  const [startTime, setStartTime] = useState(0);
+  const [endTime, setEndTime] = useState(0);
 
   const handleThemeChange = (checked) => {
     setIsDarkMode(checked);
@@ -71,6 +74,12 @@ function Provider({ children }) {
         data,
         upload,
         setUpload,
+        wavesurfer,
+        setWavesurfer,
+        startTime,
+        setStartTime,
+        endTime,
+        setEndTime,
       }}
     >
       {children}

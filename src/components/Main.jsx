@@ -56,13 +56,7 @@ const Input = () => {
               <AudioInput />
             </Col>
             {isProcessAudio && (
-              <Col
-                xs={12}
-                sm={12}
-                md={isProcessAudio ? 6 : 12}
-                lg={isProcessAudio ? 6 : 12}
-                className="mb-4"
-              >
+              <Col xs={12} sm={12} md={6} lg={6} className="mb-4">
                 <Converter className="zoom-fade-in" />
               </Col>
             )}
