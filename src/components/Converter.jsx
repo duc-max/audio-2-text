@@ -1,13 +1,8 @@
-import { Layout, theme, Popover, Table, Progress } from "antd";
-import {
-  useContext,
-  useEffect,
-  useLayoutEffect,
-  useRef,
-  useState,
-} from "react";
+import { Layout, theme, Popover, Table, Progress, Skeleton } from "antd";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Row, Col } from "antd";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 import "./Common.css";
 
@@ -19,6 +14,127 @@ const colors = {
   Neutral: "#ad6800",
   Angry: "#f5222d",
   Anxiety: "#ffc53d",
+};
+
+const data1 = {
+  status: 0,
+  statusCode: 200,
+  object: [
+    {
+      id: "SPEAKER_01",
+      text: " thứ hai của anh là.",
+      fromTime: 3000,
+      toTime: 10000,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 0.19,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 99.8,
+        },
+        {
+          key: " Sad",
+          percent: 0.01,
+        },
+        {
+          key: " Neutral",
+          percent: 0,
+        },
+      ],
+    },
+    {
+      id: "SPEAKER_00",
+      text: " thế của anh là.",
+      fromTime: 4000,
+      toTime: 10000,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 0.05,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 99.95,
+        },
+        {
+          key: " Sad",
+          percent: 0,
+        },
+        {
+          key: " Neutral",
+          percent: 0,
+        },
+      ],
+    },
+    {
+      id: "SPEAKER_00",
+      text: " nắng nóng nóng nóng nóng phủ.",
+      fromTime: 4490,
+      toTime: 6630,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 1.62,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 96.14,
+        },
+        {
+          key: " Sad",
+          percent: 2.08,
+        },
+        {
+          key: " Neutral",
+          percent: 0.16,
+        },
+      ],
+    },
+    {
+      id: "SPEAKER_01",
+      text: " nóng nóng nóng ha hashd hda  hsda 2dsad 2 32 hcas hdas hdsa khsa hdsahd aksh daskh dkash dkahs nóng nóng nóng ha hashd hda  hsda 2dsad 2 32 hcas hdas hdsa khsa hdsahd aksh daskh dkash dkahs",
+      fromTime: 20000,
+      toTime: 30000,
+      emotion: [
+        {
+          key: " Angry",
+          percent: 85.28,
+        },
+        {
+          key: " Anxiety",
+          percent: 0,
+        },
+        {
+          key: " Happy",
+          percent: 10.83,
+        },
+        {
+          key: " Sad",
+          percent: 3.89,
+        },
+        {
+          key: " Neutral",
+          percent: 0,
+        },
+      ],
+    },
+  ],
+  isOk: true,
+  isError: false,
 };
 
 function Converter() {
@@ -34,10 +150,17 @@ function Converter() {
     setPercentage,
     upload,
     isDarkMode,
-    setUpload,
+    wavesurfer,
+    setPlaying,
+    duration,
+    currentTime,
+    setCurrentTime,
+    setStartTime,
+    startTime,
+    setEndTime,
+    endTime,
   } = useContext(Context);
-
-  const [uploadCount, setUploadCount] = useState(0); // New state to track the number of uploads
+  const [activeButtonId, setActiveButtonId] = useState(null);
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -77,9 +200,7 @@ function Converter() {
       key: "percent",
     },
   ];
-
   const currentPercentageRef = useRef(0);
-  const uploadRef = useRef(false);
   useEffect(() => {
     if (loading) {
       const intervalId = setInterval(() => {
@@ -110,6 +231,20 @@ function Converter() {
     }
   }, [loading, upload]);
 
+  const handlePlayClick = (fromTime, toTime, index) => {
+    if (wavesurfer) {
+      if (activeButtonId === index && wavesurfer.isPlaying()) {
+        wavesurfer.pause();
+        setActiveButtonId(null); // Reset the active button ID to indicate it's paused
+      } else {
+        setStartTime(fromTime / 1000);
+        setEndTime(toTime / 1000);
+        wavesurfer.play(fromTime / 1000, toTime / 1000);
+        setActiveButtonId(index); // Set the active button ID to indicate it's playing
+      }
+    }
+  };
+
   return (
     <Content>
       <div
@@ -119,6 +254,7 @@ function Converter() {
           background: "#f2f4f5",
           padding: "0 1.5rem 1.5rem 1.5rem",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
+          boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
         }}
       >
         <Row gutter={[16, 16]}>
@@ -142,6 +278,13 @@ function Converter() {
                     !isDarkMode ? "rgb(102, 102, 255)" : "rgb(239, 91, 30)"
                   }
                 />
+                <Skeleton
+                  active
+                  style={{ marginTop: "0.625rem" }}
+                  paragraph={{ rows: 3 }}
+                  title
+                  avatar
+                />
               </div>
             )}
             {data && data.length > 0 && !loading && (
@@ -164,56 +307,81 @@ function Converter() {
                       style={{
                         marginBottom: "0.25rem",
                         color: isDarkMode ? "#fff" : "#000",
+                        height: "30px",
                       }}
                       avatar={<Avatar src={`../assets/${item.id}.png`} />}
                       title={
-                        <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
-                          {item.id}
-                        </span>
+                        <div
+                          className="list-audio-wrapper"
+                          style={{ color: isDarkMode ? "#fff" : "#000" }}
+                        >
+                          <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
+                            {item.id}
+                          </span>
+
+                          <Popover
+                            content={
+                              <Table
+                                columns={emotionColumns}
+                                dataSource={item.emotion}
+                                pagination={false}
+                                size="small"
+                              />
+                            }
+                            title="Chi tiết"
+                            trigger="hover"
+                          >
+                            <span style={{ cursor: "pointer" }}>
+                              {item?.emotion
+                                .sort((a, b) => b.percent - a.percent)
+                                .slice(0, 2)
+                                .map((e, index) => (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: getEmotionColor(e.key.trim()),
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    {getEmotionName(e.key.trim()) +
+                                      ": " +
+                                      e.percent +
+                                      "%"}{" "}
+                                    <br />
+                                  </span>
+                                )) || "Không có dữ liệu"}
+                            </span>
+                          </Popover>
+                        </div>
                       }
                     />
-                    <div
-                      className="list-audio-wrapper"
-                      style={{ color: isDarkMode ? "#fff" : "#000" }}
-                    >
+
+                    <div className="transcription-wrapper">
+                      <>
+                        <button
+                          className="audio-crop--play"
+                          onClick={() =>
+                            handlePlayClick(item.fromTime, item.toTime, i)
+                          }
+                          style={{
+                            color:
+                              activeButtonId === i && wavesurfer.isPlaying()
+                                ? "green"
+                                : "",
+                          }}
+                        >
+                          {activeButtonId === i && wavesurfer.isPlaying() ? (
+                            <FaPause />
+                          ) : (
+                            <FaPlay />
+                          )}
+                        </button>
+                      </>
                       <div className="transcription">
                         <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
                           {item.text}
                         </span>
                       </div>
-                      <Popover
-                        content={
-                          <Table
-                            columns={emotionColumns}
-                            dataSource={item.emotion}
-                            pagination={false}
-                            size="small"
-                          />
-                        }
-                        title="Chi tiết"
-                        trigger="hover"
-                      >
-                        <span style={{ cursor: "pointer" }}>
-                          {item?.emotion
-                            .sort((a, b) => b.percent - a.percent)
-                            .slice(0, 2)
-                            .map((e, index) => (
-                              <span
-                                key={index}
-                                style={{
-                                  color: getEmotionColor(e.key.trim()),
-                                  fontSize: 16,
-                                }}
-                              >
-                                {getEmotionName(e.key.trim()) +
-                                  ": " +
-                                  e.percent +
-                                  "%"}{" "}
-                                <br />
-                              </span>
-                            )) || "Không có dữ liệu"}
-                        </span>
-                      </Popover>
                     </div>
                   </List.Item>
                 )}

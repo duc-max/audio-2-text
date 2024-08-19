@@ -45,7 +45,6 @@ function AudioInput() {
     setUpload(false);
     setLoading(true);
     setValidated(false);
-
   };
   const props = {
     name: "file",
@@ -55,25 +54,27 @@ function AudioInput() {
     accept: "audio/*",
     disabled: uploadedFile ? true : false,
     // The main beforeUpload function with integrated error handling
-    beforeUpload: async (file) => {
-      setValidated(true);
-      try {
-        const resampledFile = await resampleAudioFile(file);
-        uploadRequest[file.uid] = resampledFile;
-        setValidated(false);
-        return resampledFile;
-      } catch (error) {
-        return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-      }
-    },
+    // beforeUpload: async (file) => {
+    //   try {
+    //     const resampledFile = await resampleAudioFile(file);
+    //     uploadRequest[file.uid] = resampledFile;
+    //     return resampledFile;
+    //   } catch (error) {
+    //     console.error(error);
+    //     message.error(`Failed to resample audio file: ${error.message}`);
+    //     return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+    //   }
+    // },
 
-
-    onChange: (info) => {
-      if (!fileValidator(info.file)) {
-        setValidated(false);
-      }
-      handleChange(info, setUploadedFile, setUpload, setData, data);
-    },
+    onChange: (info) =>
+      handleChange(
+        info,
+        setUploadedFile,
+        setUpload,
+        setData,
+        data,
+        setPercentage
+      ),
     onRemove: (file) => {
       console.log("removed:", file.name);
       if (uploadRequest[file.uid]) {

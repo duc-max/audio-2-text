@@ -8,9 +8,19 @@
   justify-content: space-between;
 }
 
-.list-audio-wrapper .transcription {
+.transcription-wrapper {
+  display: flex;
+  align-items: center;
+  margin-top: 6px;
+}
+
+.audio-crop--play {
+  padding: 6px 10px;
+  margin-right: 6px;
+}
+.transcription {
   display: block;
-  width: 80%;
+  width: 70%;
   overflow-wrap: break-word;
   word-wrap: normal;
   white-space: normal;
@@ -60,17 +70,25 @@
   }
 }
 
-@media (max-width: 575.98px) {
+@media (max-width: 576px) {
   .pt-5 {
     padding-top: 1.25rem !important;
   }
 }
 
-@media (max-width: 767.98px) {
+@media screen and (min-width: 768px) and (max-width: 1200px) {
+  .transcription {
+    width: 50%;
+  }
+}
+@media (max-width: 768px) {
   .d-flex {
     flex-direction: column !important;
   }
 
+  .transcription {
+    width: 70%;
+  }
   .pt-5 {
     padding-top: 1.25rem !important;
   }
