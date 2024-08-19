@@ -25,7 +25,6 @@ function Provider({ children }) {
   const [wavesurfer, setWavesurfer] = useState(null);
   const [startTime, setStartTime] = useState(0);
   const [endTime, setEndTime] = useState(0);
-
   const handleThemeChange = (checked) => {
     setIsDarkMode(checked);
   };

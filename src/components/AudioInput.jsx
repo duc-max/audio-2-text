@@ -7,12 +7,18 @@ import {
   Divider,
   Upload,
   message,
+  Spin,
 } from "antd";
-import { InboxOutlined, UploadOutlined } from "@ant-design/icons";
+import {
+  InboxOutlined,
+  UploadOutlined,
+  LoadingOutlined,
+} from "@ant-design/icons";
 import AudioPlayer from "./others/AudioPlay";
 import { Context } from "../context/Context";
 import { handleChange } from "../funcs/fileInputHandler";
 import { resampleAudioFile, uploadRequest } from "../funcs/fileResampler.js";
+import fileValidator from "../funcs/fileValidator.js";
 const { Content } = Layout;
 const { Dragger } = Upload;
 const { Text } = Typography;
@@ -26,6 +32,8 @@ function AudioInput() {
     setUpload,
     setData,
     data,
+    setValidated,
+    validated,
     setPercentage,
     setLoading,
   } = useContext(Context);
@@ -36,6 +44,7 @@ function AudioInput() {
     setIsProcessAudio(false);
     setUpload(false);
     setLoading(true);
+    setValidated(false);
   };
   const props = {
     name: "file",
@@ -127,69 +136,81 @@ function AudioInput() {
             </div>
           </div>
         )}
-        <Dragger
-          className="fade-in"
-          showUploadList={false}
-          {...props}
+        <Spin
+          size="large"
+          spinning={validated}
+          indicator={<LoadingOutlined spin />}
           style={{
-            border: "none",
-            background: "none",
-            display: uploadedFile ? "none" : "block",
+            backgroundColor: isDarkMode ? "#1f1f1f" : "#ffff",
+            color: isDarkMode ? "#ef5b1e" : "",
+            boxShadow: "none",
           }}
+          tip="Đang xử lý tệp âm thanh..."
         >
-          <p className="ant-upload-drag-icon">
-            <InboxOutlined
-              style={{
-                color: isDarkMode ? "#f5f5f5" : "inherit",
-              }}
-            />
-          </p>
-          <Text
-            className="text-input"
+          <Dragger
+            className="fade-in"
+            showUploadList={false}
+            {...props}
             style={{
-              color: isDarkMode ? "#f5f5f5" : "inherit",
+              border: "none",
+              background: "none",
+              display: uploadedFile ? "none" : "block",
             }}
           >
-            Thả tệp âm thanh vào đây
-          </Text>
-          <Divider
-            style={{
-              margin: "0.125rem auto",
-              color: isDarkMode ? "#000" : "inherit",
-            }}
-          >
-            <p
+            <p className="ant-upload-drag-icon">
+              <InboxOutlined
+                style={{
+                  color: isDarkMode ? "#f5f5f5" : "inherit",
+                }}
+              />
+            </p>
+            <Text
               className="text-input"
               style={{
                 color: isDarkMode ? "#f5f5f5" : "inherit",
               }}
             >
-              hoặc
-            </p>
-          </Divider>
-          <Button
-            icon={<UploadOutlined />}
-            style={{
-              margin: " 0 0 0.625rem 0",
-              position: "relative",
-              color: isDarkMode ? "#000" : "inherit",
-              borderColor: isDarkMode ? "#ef5b1e" : "",
-            }}
-          >
-            Chọn tệp
-          </Button>
-          <Text
-            className="ant-upload-hint d-block"
-            style={{
-              fontSize: "0.75rem",
-              margin: "0.625rem 0",
-              position: "relative",
-              color: isDarkMode ? "#f5f5f5" : "inherit",
-            }}
-          >
-            *Hỗ trợ tất cả các tệp âm thanh
-          </Text>
-        </Dragger>
+              Thả tệp âm thanh vào đây
+            </Text>
+            <Divider
+              style={{
+                margin: "0.125rem auto",
+                color: isDarkMode ? "#000" : "inherit",
+              }}
+            >
+              <p
+                className="text-input"
+                style={{
+                  color: isDarkMode ? "#f5f5f5" : "inherit",
+                }}
+              >
+                hoặc
+              </p>
+            </Divider>
+            <Button
+              icon={<UploadOutlined />}
+              style={{
+                margin: " 0 0 0.625rem 0",
+                position: "relative",
+                color: isDarkMode ? "#000" : "inherit",
+                borderColor: isDarkMode ? "#ef5b1e" : "",
+              }}
+            >
+              Chọn tệp
+            </Button>
+            <Text
+              className="ant-upload-hint d-block"
+              style={{
+                fontSize: "0.75rem",
+                margin: "0.625rem 0",
+                position: "relative",
+                color: isDarkMode ? "#f5f5f5" : "inherit",
+              }}
+            >
+              *Hỗ trợ tất cả các tệp âm thanh
+            </Text>
+          </Dragger>
+        </Spin>
       </Col>
     </Content>
   );
