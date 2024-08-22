@@ -7,10 +7,10 @@ import {
   Skeleton,
   Tooltip,
 } from "antd";
-import { useContext, useEffect, useRef } from "react";
-import { SoundOutlined } from "@ant-design/icons";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Row, Col } from "antd";
+import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
 import AudioSegment from "./others/AudioSegments";
 
 import "./Common.css";
@@ -24,15 +24,16 @@ const colors = {
   Angry: "#f5222d",
   Anxiety: "#ffc53d",
 };
-const data2 = {
+
+const data1 = {
   status: 0,
   statusCode: 200,
   object: [
     {
       id: "SPEAKER_01",
       text: " thứ hai của anh là.",
-      fromTime: 110,
-      toTime: 1010,
+      fromTime: 3000,
+      toTime: 10000,
       emotion: [
         {
           key: " Angry",
@@ -59,8 +60,8 @@ const data2 = {
     {
       id: "SPEAKER_00",
       text: " thế của anh là.",
-      fromTime: 110,
-      toTime: 1130,
+      fromTime: 4000,
+      toTime: 10000,
       emotion: [
         {
           key: " Angry",
@@ -114,9 +115,9 @@ const data2 = {
     },
     {
       id: "SPEAKER_01",
-      text: " nóng nóng nóng.",
-      fromTime: 4750,
-      toTime: 6120,
+      text: " nóng nóng nóng ha hashd hda  hsda 2dsad 2 32 hcas hdas hdsa khsa hdsahd aksh daskh dkash dkahs nóng nóng nóng ha hashd hda  hsda 2dsad 2 32 hcas hdas hdsa khsa hdsahd aksh daskh dkash dkahs",
+      fromTime: 20000,
+      toTime: 30000,
       emotion: [
         {
           key: " Angry",
@@ -144,6 +145,7 @@ const data2 = {
   isOk: true,
   isError: false,
 };
+
 function Converter() {
   const {
     token: { borderRadiusLG },
@@ -158,7 +160,17 @@ function Converter() {
     setPercentage,
     upload,
     isDarkMode,
+    wavesurfer,
+    setPlaying,
+    duration,
+    currentTime,
+    setCurrentTime,
+    setStartTime,
+    startTime,
+    setEndTime,
+    endTime,
   } = useContext(Context);
+  const [activeButtonId, setActiveButtonId] = useState(null);
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -198,7 +210,6 @@ function Converter() {
       key: "percent",
     },
   ];
-
   const currentPercentageRef = useRef(0);
   useEffect(() => {
     if (loading) {
@@ -230,6 +241,20 @@ function Converter() {
     }
   }, [loading, upload]);
 
+  const handlePlayClick = (fromTime, toTime, index) => {
+    if (wavesurfer) {
+      if (activeButtonId === index && wavesurfer.isPlaying()) {
+        wavesurfer.pause();
+        setActiveButtonId(null); // Reset the active button ID to indicate it's paused
+      } else {
+        setStartTime(fromTime / 1000);
+        setEndTime(toTime / 1000);
+        wavesurfer.play(fromTime / 1000, toTime / 1000);
+        setActiveButtonId(index); // Set the active button ID to indicate it's playing
+      }
+    }
+  };
+
   return (
     <Content>
       <div
@@ -237,8 +262,10 @@ function Converter() {
         style={{
           borderRadius: borderRadiusLG,
           background: "#f2f4f5",
-          padding: "0 1.5rem 1.5rem 1.5rem",
+          padding: " 0 1.5rem ",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
+          boxShadow:
+            "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
         }}
       >
         <Row gutter={[16, 16]}>
@@ -247,8 +274,8 @@ function Converter() {
               <div>
                 <p
                   style={{
-                    margin: "0",
-                    padding: "2px",
+                    margin: "0.875rem 0 0 0 ",
+                    padding: "4px",
                     fontSize: "16px",
                     color: isDarkMode ? "#fff" : "#000",
                     backgroundColor: "transparent",
@@ -273,12 +300,12 @@ function Converter() {
               </div>
             )} */}
             {/* && !loading  */}
-            {data2 && data2.object.length > 0 && (
+            {data1 && data1.object.length > 0 && (
               <List
-                bordered
                 itemLayout="vertical"
+                
                 size="small"
-                dataSource={data2.object}
+                dataSource={data1.object}
                 style={{ height: "100%", padding: "0.5rem" }}
                 renderItem={(item, i) => (
                   <List.Item
@@ -294,6 +321,7 @@ function Converter() {
                       style={{
                         marginBottom: "0.25rem",
                         color: isDarkMode ? "#fff" : "#000",
+                        height: "30px",
                       }}
                       avatar={
                         <Avatar
@@ -301,40 +329,13 @@ function Converter() {
                         />
                       }
                       title={
-                        <span
-                          style={{
-                            color: isDarkMode ? "#fff" : "#000",
-                          }}
+                        <div
+                          className="list-audio-wrapper"
+                          style={{ color: isDarkMode ? "#fff" : "#000" }}
                         >
-                          {item.id}
-                        </span>
-                      }
-                    />
-                    <div
-                      className="list-audio-wrapper"
-                      style={{
-                        color: isDarkMode ? "#fff" : "#000",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                      }}
-                    >
-                      <div
-                        className="transcription"
-                        style={{
-                          marginRight: "20px",
-                        }}
-                      >
-                        <span
-                          style={{
-                            color: isDarkMode ? "#fff" : "#000",
-                            wordBreak: "break-all",
-                          }}
-                        >
-                          <div>
-                            <SoundOutlined />
+                          <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
                             <Popover
-                              style={{ color: !isDarkMode ? "#fff" : "#000" }}
+                              padding="0"
                               color={isDarkMode ? "#1f1f1f" : "#ffff"}
                               content={() => (
                                 <div>
@@ -346,23 +347,54 @@ function Converter() {
                                   />
                                 </div>
                               )}
-                              title={`Đoạn từ ${item.fromTime / 1000} giây - ${
-                                item.toTime / 1000
-                              } giây`}
+                              // title={`Đoạn từ ${item.fromTime / 1000} giây - ${
+                              //   item.toTime / 1000
+                              // } giây`}
                               trigger="click"
                             >
-                              <Tooltip title="Nhấn để nghe lại">
+                              <Tooltip title="Xem phân đoạn">
                                 <span
                                   style={{
                                     cursor: "pointer",
                                     fontSize: "1.1rem",
                                   }}
                                 >
-                                  {item.text}
+                                  {item.id}
                                 </span>
                               </Tooltip>
                             </Popover>
-                          </div>
+                          </span>
+                        </div>
+                      }
+                    />
+
+                    <div className="transcription-wrapper">
+                      <button
+                        className="audio-crop--play"
+                        onClick={() =>
+                          handlePlayClick(item.fromTime, item.toTime, i)
+                        }
+                        style={{
+                          color:
+                            activeButtonId === i && wavesurfer.isPlaying()
+                              ? "#ef5b1e"
+                              : "",
+                        }}
+                      >
+                        {activeButtonId === i && wavesurfer.isPlaying() ? (
+                          <PauseOutlined />
+                        ) : (
+                          <CaretRightOutlined />
+                        )}
+                      </button>
+                      <div className="transcription">
+                        <span
+                          style={{
+                            color: isDarkMode ? "#fff" : "#000",
+                            fontSize: "1.125rem",
+                          }}
+                        >
+                          {item.text}
                         </span>
                       </div>
                       <Popover
@@ -377,7 +409,7 @@ function Converter() {
                         title="Chi tiết"
                         trigger="hover"
                       >
-                        <span style={{ cursor: "pointer" }}>
+                        <span style={{ cursor: "pointer", marginLeft: "10px" }}>
                           {item?.emotion
                             .sort((a, b) => b.percent - a.percent)
                             .slice(0, 2)
@@ -404,7 +436,7 @@ function Converter() {
                                   {": " + e.percent + "%"}
                                 </span>
                               </span>
-                            ))}
+                            )) || "Không có dữ liệu"}
                         </span>
                       </Popover>
                     </div>

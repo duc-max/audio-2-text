@@ -61,7 +61,7 @@ function audioBufferToWave(abuffer) {
 }
 
 const AudioSegment = ({ itemId, fromTime, toTime }) => {
-  const { uploadedFile, isDarkMode } = useContext(Context);
+  const { uploadedFile, isDarkMode, data } = useContext(Context);
   const [wavesurfer, setWavesurfer] = useState(null);
   const [playing, setPlaying] = useState(false);
   const [currentTime, setCurrentTime] = useState(0);
@@ -73,6 +73,7 @@ const AudioSegment = ({ itemId, fromTime, toTime }) => {
   const volumeControlRef = useRef(null);
 
   const sliceAudioBuffer = (audioBuffer, start, end) => {
+    if (data) return audioBuffer;
     const channels = audioBuffer.numberOfChannels;
     const rate = audioBuffer.sampleRate;
     const startOffset = Math.floor(rate * start);
@@ -174,14 +175,6 @@ const AudioSegment = ({ itemId, fromTime, toTime }) => {
     }
   };
 
-  const handleVolumeChange = (value) => {
-    setVolume(value);
-    setMuted(value === 0);
-    if (wavesurfer) {
-      wavesurfer.setVolume(value);
-    }
-  };
-
   const skipForward = () => {
     if (wavesurfer) {
       const newTime = Math.min(currentTime + 10, toTime / 1000);
@@ -203,10 +196,6 @@ const AudioSegment = ({ itemId, fromTime, toTime }) => {
       wavesurfer.play();
       setPlaying(true);
     }
-  };
-
-  const handleVolumeIconClick = () => {
-    setSliderVisible(!sliderVisible);
   };
 
   return (
@@ -282,11 +271,6 @@ const AudioSegment = ({ itemId, fromTime, toTime }) => {
           </Button>
           <Button onClick={skipForward} style={{ marginRight: "0.625rem" }}>
             <IoMdSkipForward />
-          </Button>
-        </div>
-        <div>
-          <Button onClick={resetAudio} style={{ marginRight: "0.625rem" }}>
-            <BiReset />
           </Button>
         </div>
       </div>

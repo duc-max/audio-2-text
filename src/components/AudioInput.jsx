@@ -1,29 +1,13 @@
 import { useContext } from "react";
-import {
-  Layout,
-  Col,
-  Button,
-  Typography,
-  Divider,
-  Upload,
-  message,
-  Spin,
-} from "antd";
-import https from "https";
-import axios from "axios";
-import {
-  InboxOutlined,
-  UploadOutlined,
-  LoadingOutlined,
-} from "@ant-design/icons";
+import { Layout, Col, Button, Spin } from "antd";
+
 import AudioPlayer from "./others/AudioPlay";
+import { LoadingOutlined } from "@ant-design/icons";
 import { Context } from "../context/Context";
-import { handleChange } from "../funcs/fileInputHandler";
-import { resampleAudioFile, uploadRequest } from "../funcs/fileResampler.js";
-import fileValidator from "../funcs/fileValidator.js";
+import Loader from "./others/loader/Loader";
+
+import MusicalDragger from "./Dragger.jsx";
 const { Content } = Layout;
-const { Dragger } = Upload;
-const { Text } = Typography;
 
 function AudioInput() {
   const {
@@ -33,7 +17,6 @@ function AudioInput() {
     setUploadedFile,
     setUpload,
     setData,
-    data,
     setValidated,
     validated,
     setPercentage,
@@ -48,82 +31,18 @@ function AudioInput() {
     setLoading(true);
     setValidated(false);
   };
-  const props = {
-    name: "file",
-    action: "https://192.168.93.55:5001/api/FileUpload/upload",
-    multiple: false,
-    method: "POST",
-    accept: "audio/*",
-    disabled: uploadedFile ? true : false,
-
-    // The main beforeUpload function with integrated error handling
-    beforeUpload: async (file) => {
-      setValidated(true);
-      try {
-        const resampledFile = await resampleAudioFile(file);
-        uploadRequest[file.uid] = resampledFile;
-        setValidated(false);
-        return resampledFile;
-      } catch (error) {
-        return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-      }
-    },
-
-    customRequest: async ({ file, onSuccess, onError }) => {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const axiosConfig = {
-        method: "post",
-        url: "https://192.168.93.55:5001/api/FileUpload/upload",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Access-Control-Allow-Origin": "*",
-        },
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
-        }),
-      };
-
-      try {
-        const response = await axios(axiosConfig);
-
-        if (response.status === 200) {
-          onSuccess(response, file);
-        } else {
-          onError(new Error("Upload failed"));
-        }
-      } catch (error) {
-        onError(error);
-      }
-    },
-    onChange: (info) => {
-      if (!fileValidator(info.file)) {
-        setValidated(false);
-      }
-      handleChange(info, setUploadedFile, setUpload, setData, data);
-    },
-    onRemove: (file) => {
-      console.log("removed:", file.name);
-      if (uploadRequest[file.uid]) {
-        delete uploadRequest[file.uid];
-        message.info(`${file.name} upload has been cancelled.`);
-        console.log(uploadRequest[file.uid]);
-      }
-    },
-  };
 
   return (
     <Content
       style={{
-        margin: "0.875rem 1rem 0",
         height: "100%",
       }}
     >
       <Col
-        className="border-orange-500 border-dashed border-2 p-4"
+        className=" p-4"
         style={{
+          boxShadow:
+            "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
           margin: "0 auto",
           minHeight: 360,
           borderRadius: 8,
@@ -147,7 +66,6 @@ function AudioInput() {
                   marginRight: "0.625rem",
                   color: isDarkMode ? "#000" : "inherit",
                 }}
-                size="small"
               >
                 Xóa
               </Button>
@@ -174,14 +92,16 @@ function AudioInput() {
             backgroundColor: isDarkMode ? "#1f1f1f" : "#ffff",
             color: isDarkMode ? "#ef5b1e" : "",
             boxShadow: "none",
+            
           }}
           tip="Đang xử lý tệp âm thanh..."
         >
-          <Dragger
+          {/* <Dragger
             className="fade-in"
             showUploadList={false}
             {...props}
             style={{
+              padding: 0,
               border: "none",
               background: "none",
               display: uploadedFile ? "none" : "block",
@@ -204,8 +124,8 @@ function AudioInput() {
             </Text>
             <Divider
               style={{
+                borderColor: isDarkMode ? "#f5f5f5" : "inherit",
                 margin: "0.125rem auto",
-                color: isDarkMode ? "#000" : "inherit",
               }}
             >
               <p
@@ -239,7 +159,8 @@ function AudioInput() {
             >
               *Hỗ trợ tất cả các tệp âm thanh
             </Text>
-          </Dragger>
+          </Dragger> */}
+          <MusicalDragger />
         </Spin>
       </Col>
     </Content>

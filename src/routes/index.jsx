@@ -1,6 +1,9 @@
 import Input from "../components/Main";
-
-const publicRoutes = [{ path: "/", component: Input }];
+import ProductOV from "../components/ProductOV";
+const publicRoutes = [
+  { path: "/", component: Input },
+  { path: "/intro", component: ProductOV },
+];
 
 const privateRoutes = [];
 
