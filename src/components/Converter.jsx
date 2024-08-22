@@ -1,17 +1,8 @@
-import {
-  Layout,
-  theme,
-  Popover,
-  Table,
-  Progress,
-  Skeleton,
-  Tooltip,
-} from "antd";
-import { useContext, useEffect, useRef } from "react";
-import { SoundOutlined } from "@ant-design/icons";
+import { Layout, theme, Popover, Table, Progress, Skeleton } from "antd";
+import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Row, Col } from "antd";
-import AudioSegment from "./others/AudioSegments";
+import { FaPlay, FaPause } from "react-icons/fa";
 
 import "./Common.css";
 
@@ -24,15 +15,16 @@ const colors = {
   Angry: "#f5222d",
   Anxiety: "#ffc53d",
 };
-const data2 = {
+
+const data1 = {
   status: 0,
   statusCode: 200,
   object: [
     {
       id: "SPEAKER_01",
       text: " thứ hai của anh là.",
-      fromTime: 110,
-      toTime: 1010,
+      fromTime: 3000,
+      toTime: 10000,
       emotion: [
         {
           key: " Angry",
@@ -59,8 +51,8 @@ const data2 = {
     {
       id: "SPEAKER_00",
       text: " thế của anh là.",
-      fromTime: 110,
-      toTime: 1130,
+      fromTime: 4000,
+      toTime: 10000,
       emotion: [
         {
           key: " Angry",
@@ -114,9 +106,9 @@ const data2 = {
     },
     {
       id: "SPEAKER_01",
-      text: " nóng nóng nóng.",
-      fromTime: 4750,
-      toTime: 6120,
+      text: " nóng nóng nóng ha hashd hda  hsda 2dsad 2 32 hcas hdas hdsa khsa hdsahd aksh daskh dkash dkahs nóng nóng nóng ha hashd hda  hsda 2dsad 2 32 hcas hdas hdsa khsa hdsahd aksh daskh dkash dkahs",
+      fromTime: 20000,
+      toTime: 30000,
       emotion: [
         {
           key: " Angry",
@@ -144,6 +136,7 @@ const data2 = {
   isOk: true,
   isError: false,
 };
+
 function Converter() {
   const {
     token: { borderRadiusLG },
@@ -158,7 +151,17 @@ function Converter() {
     setPercentage,
     upload,
     isDarkMode,
+    wavesurfer,
+    setPlaying,
+    duration,
+    currentTime,
+    setCurrentTime,
+    setStartTime,
+    startTime,
+    setEndTime,
+    endTime,
   } = useContext(Context);
+  const [activeButtonId, setActiveButtonId] = useState(null);
 
   const getEmotionColor = (emotion) => {
     return colors[emotion] || "#000";
@@ -198,7 +201,6 @@ function Converter() {
       key: "percent",
     },
   ];
-
   const currentPercentageRef = useRef(0);
   useEffect(() => {
     if (loading) {
@@ -230,6 +232,20 @@ function Converter() {
     }
   }, [loading, upload]);
 
+  const handlePlayClick = (fromTime, toTime, index) => {
+    if (wavesurfer) {
+      if (activeButtonId === index && wavesurfer.isPlaying()) {
+        wavesurfer.pause();
+        setActiveButtonId(null); // Reset the active button ID to indicate it's paused
+      } else {
+        setStartTime(fromTime / 1000);
+        setEndTime(toTime / 1000);
+        wavesurfer.play(fromTime / 1000, toTime / 1000);
+        setActiveButtonId(index); // Set the active button ID to indicate it's playing
+      }
+    }
+  };
+
   return (
     <Content>
       <div
@@ -239,6 +255,7 @@ function Converter() {
           background: "#f2f4f5",
           padding: "0 1.5rem 1.5rem 1.5rem",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
+          boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
         }}
       >
         <Row gutter={[16, 16]}>
@@ -294,6 +311,7 @@ function Converter() {
                       style={{
                         marginBottom: "0.25rem",
                         color: isDarkMode ? "#fff" : "#000",
+                        height: "30px",
                       }}
                       avatar={
                         <Avatar
@@ -301,112 +319,77 @@ function Converter() {
                         />
                       }
                       title={
-                        <span
-                          style={{
-                            color: isDarkMode ? "#fff" : "#000",
-                          }}
+                        <div
+                          className="list-audio-wrapper"
+                          style={{ color: isDarkMode ? "#fff" : "#000" }}
                         >
-                          {item.id}
-                        </span>
+                          <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
+                            {item.id}
+                          </span>
+
+                          <Popover
+                            content={
+                              <Table
+                                columns={emotionColumns}
+                                dataSource={item.emotion}
+                                pagination={false}
+                                size="small"
+                              />
+                            }
+                            title="Chi tiết"
+                            trigger="hover"
+                          >
+                            <span style={{ cursor: "pointer" }}>
+                              {item?.emotion
+                                .sort((a, b) => b.percent - a.percent)
+                                .slice(0, 2)
+                                .map((e, index) => (
+                                  <span
+                                    key={index}
+                                    style={{
+                                      color: getEmotionColor(e.key.trim()),
+                                      fontSize: 16,
+                                    }}
+                                  >
+                                    {getEmotionName(e.key.trim()) +
+                                      ": " +
+                                      e.percent +
+                                      "%"}{" "}
+                                    <br />
+                                  </span>
+                                )) || "Không có dữ liệu"}
+                            </span>
+                          </Popover>
+                        </div>
                       }
                     />
-                    <div
-                      className="list-audio-wrapper"
-                      style={{
-                        color: isDarkMode ? "#fff" : "#000",
-                        display: "flex",
-                        alignItems: "center",
-                        justifyContent: "space-evenly",
-                      }}
-                    >
-                      <div
-                        className="transcription"
-                        style={{
-                          marginRight: "20px",
-                        }}
-                      >
-                        <span
+
+                    <div className="transcription-wrapper">
+                      <>
+                        <button
+                          className="audio-crop--play"
+                          onClick={() =>
+                            handlePlayClick(item.fromTime, item.toTime, i)
+                          }
                           style={{
-                            color: isDarkMode ? "#fff" : "#000",
-                            wordBreak: "break-all",
+                            color:
+                              activeButtonId === i && wavesurfer.isPlaying()
+                                ? "green"
+                                : "",
                           }}
                         >
-                          <div>
-                            <SoundOutlined />
-                            <Popover
-                              style={{ color: !isDarkMode ? "#fff" : "#000" }}
-                              color={isDarkMode ? "#1f1f1f" : "#ffff"}
-                              content={() => (
-                                <div>
-                                  <AudioSegment
-                                    key={item.id}
-                                    itemId={item.id}
-                                    fromTime={item.fromTime}
-                                    toTime={item.toTime}
-                                  />
-                                </div>
-                              )}
-                              title={`Đoạn từ ${item.fromTime / 1000} giây - ${
-                                item.toTime / 1000
-                              } giây`}
-                              trigger="click"
-                            >
-                              <Tooltip title="Nhấn để nghe lại">
-                                <span
-                                  style={{
-                                    cursor: "pointer",
-                                    fontSize: "1.1rem",
-                                  }}
-                                >
-                                  {item.text}
-                                </span>
-                              </Tooltip>
-                            </Popover>
-                          </div>
+                          {activeButtonId === i && wavesurfer.isPlaying() ? (
+                            <FaPause />
+                          ) : (
+                            <FaPlay />
+                          )}
+                        </button>
+                      </>
+                      <div className="transcription">
+                        <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
+                          {item.text}
                         </span>
                       </div>
-                      <Popover
-                        content={
-                          <Table
-                            columns={emotionColumns}
-                            dataSource={item.emotion}
-                            pagination={false}
-                            size="small"
-                          />
-                        }
-                        title="Chi tiết"
-                        trigger="hover"
-                      >
-                        <span style={{ cursor: "pointer" }}>
-                          {item?.emotion
-                            .sort((a, b) => b.percent - a.percent)
-                            .slice(0, 2)
-                            .map((e, index) => (
-                              <span
-                                key={index}
-                                style={{
-                                  color: getEmotionColor(e.key.trim()),
-                                  fontSize: "1rem",
-                                  display: "flex",
-                                  justifyContent: "space-between",
-                                  width: "7.5rem",
-                                  alignItems: "center",
-                                }}
-                              >
-                                <span>{getEmotionName(e.key.trim())}</span>
-                                <span
-                                  style={{
-                                    flex: "1 1 auto",
-                                    minWidth: "50%",
-                                    textAlign: "right",
-                                  }}
-                                >
-                                  {": " + e.percent + "%"}
-                                </span>
-                              </span>
-                            ))}
-                        </span>
-                      </Popover>
                     </div>
                   </List.Item>
                 )}

@@ -57,53 +57,27 @@ function AudioInput() {
     disabled: uploadedFile ? true : false,
 
     // The main beforeUpload function with integrated error handling
-    beforeUpload: async (file) => {
-      setValidated(true);
-      try {
-        const resampledFile = await resampleAudioFile(file);
-        uploadRequest[file.uid] = resampledFile;
-        setValidated(false);
-        return resampledFile;
-      } catch (error) {
-        return Upload.LIST_IGNORE; // Prevent the file from being uploaded
-      }
-    },
+    // beforeUpload: async (file) => {
+    //   try {
+    //     const resampledFile = await resampleAudioFile(file);
+    //     uploadRequest[file.uid] = resampledFile;
+    //     return resampledFile;
+    //   } catch (error) {
+    //     console.error(error);
+    //     message.error(`Failed to resample audio file: ${error.message}`);
+    //     return Upload.LIST_IGNORE; // Prevent the file from being uploaded
+    //   }
+    // },
 
-    customRequest: async ({ file, onSuccess, onError }) => {
-      const formData = new FormData();
-      formData.append("file", file);
-
-      const axiosConfig = {
-        method: "post",
-        url: "https://192.168.93.55:5001/api/FileUpload/upload",
-        data: formData,
-        headers: {
-          "Content-Type": "multipart/form-data",
-          "Access-Control-Allow-Origin": "*",
-        },
-        httpsAgent: new https.Agent({
-          rejectUnauthorized: false,
-        }),
-      };
-
-      try {
-        const response = await axios(axiosConfig);
-
-        if (response.status === 200) {
-          onSuccess(response, file);
-        } else {
-          onError(new Error("Upload failed"));
-        }
-      } catch (error) {
-        onError(error);
-      }
-    },
-    onChange: (info) => {
-      if (!fileValidator(info.file)) {
-        setValidated(false);
-      }
-      handleChange(info, setUploadedFile, setUpload, setData, data);
-    },
+    onChange: (info) =>
+      handleChange(
+        info,
+        setUploadedFile,
+        setUpload,
+        setData,
+        data,
+        setPercentage
+      ),
     onRemove: (file) => {
       console.log("removed:", file.name);
       if (uploadRequest[file.uid]) {
