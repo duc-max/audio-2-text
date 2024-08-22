@@ -73,7 +73,7 @@ const AudioSegment = ({ itemId, fromTime, toTime }) => {
   const volumeControlRef = useRef(null);
 
   const sliceAudioBuffer = (audioBuffer, start, end) => {
-    if(data) return audioBuffer;
+    if (data) return audioBuffer;
     const channels = audioBuffer.numberOfChannels;
     const rate = audioBuffer.sampleRate;
     const startOffset = Math.floor(rate * start);

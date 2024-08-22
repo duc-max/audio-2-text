@@ -1,8 +1,17 @@
-import { Layout, theme, Popover, Table, Progress, Skeleton } from "antd";
+import {
+  Layout,
+  theme,
+  Popover,
+  Table,
+  Progress,
+  Skeleton,
+  Tooltip,
+} from "antd";
 import { useContext, useEffect, useRef, useState } from "react";
 import { Context } from "../context/Context";
 import { Avatar, List, Row, Col } from "antd";
-import { FaPlay, FaPause } from "react-icons/fa";
+import { CaretRightOutlined, PauseOutlined } from "@ant-design/icons";
+import AudioSegment from "./others/AudioSegments";
 
 import "./Common.css";
 
@@ -253,9 +262,10 @@ function Converter() {
         style={{
           borderRadius: borderRadiusLG,
           background: "#f2f4f5",
-          padding: "0 1.5rem 1.5rem 1.5rem",
+          padding: " 0 1.5rem ",
           backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
-          boxShadow: "5px 5px 10px rgba(0, 0, 0, 0.3)",
+          boxShadow:
+            "rgba(0, 0, 0, 0.4) 0px 2px 4px, rgba(0, 0, 0, 0.3) 0px 7px 13px -3px, rgba(0, 0, 0, 0.2) 0px -3px 0px inset",
         }}
       >
         <Row gutter={[16, 16]}>
@@ -264,8 +274,8 @@ function Converter() {
               <div>
                 <p
                   style={{
-                    margin: "0",
-                    padding: "2px",
+                    margin: "0.875rem 0 0 0 ",
+                    padding: "4px",
                     fontSize: "16px",
                     color: isDarkMode ? "#fff" : "#000",
                     backgroundColor: "transparent",
@@ -290,12 +300,12 @@ function Converter() {
               </div>
             )} */}
             {/* && !loading  */}
-            {data2 && data2.object.length > 0 && (
+            {data1 && data1.object.length > 0 && (
               <List
-                bordered
                 itemLayout="vertical"
+                
                 size="small"
-                dataSource={data2.object}
+                dataSource={data1.object}
                 style={{ height: "100%", padding: "0.5rem" }}
                 renderItem={(item, i) => (
                   <List.Item
@@ -324,72 +334,111 @@ function Converter() {
                           style={{ color: isDarkMode ? "#fff" : "#000" }}
                         >
                           <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
-                            {item.id}
+                            <Popover
+                              padding="0"
+                              color={isDarkMode ? "#1f1f1f" : "#ffff"}
+                              content={() => (
+                                <div>
+                                  <AudioSegment
+                                    key={item.id}
+                                    itemId={item.id}
+                                    fromTime={item.fromTime}
+                                    toTime={item.toTime}
+                                  />
+                                </div>
+                              )}
+                              // title={`Đoạn từ ${item.fromTime / 1000} giây - ${
+                              //   item.toTime / 1000
+                              // } giây`}
+                              trigger="click"
+                            >
+                              <Tooltip title="Xem phân đoạn">
+                                <span
+                                  style={{
+                                    cursor: "pointer",
+                                    fontSize: "1.1rem",
+                                  }}
+                                >
+                                  {item.id}
+                                </span>
+                              </Tooltip>
+                            </Popover>
                           </span>
-
-                          <Popover
-                            content={
-                              <Table
-                                columns={emotionColumns}
-                                dataSource={item.emotion}
-                                pagination={false}
-                                size="small"
-                              />
-                            }
-                            title="Chi tiết"
-                            trigger="hover"
-                          >
-                            <span style={{ cursor: "pointer" }}>
-                              {item?.emotion
-                                .sort((a, b) => b.percent - a.percent)
-                                .slice(0, 2)
-                                .map((e, index) => (
-                                  <span
-                                    key={index}
-                                    style={{
-                                      color: getEmotionColor(e.key.trim()),
-                                      fontSize: 16,
-                                    }}
-                                  >
-                                    {getEmotionName(e.key.trim()) +
-                                      ": " +
-                                      e.percent +
-                                      "%"}{" "}
-                                    <br />
-                                  </span>
-                                )) || "Không có dữ liệu"}
-                            </span>
-                          </Popover>
                         </div>
                       }
                     />
 
                     <div className="transcription-wrapper">
-                      <>
-                        <button
-                          className="audio-crop--play"
-                          onClick={() =>
-                            handlePlayClick(item.fromTime, item.toTime, i)
-                          }
+                      <button
+                        className="audio-crop--play"
+                        onClick={() =>
+                          handlePlayClick(item.fromTime, item.toTime, i)
+                        }
+                        style={{
+                          color:
+                            activeButtonId === i && wavesurfer.isPlaying()
+                              ? "#ef5b1e"
+                              : "",
+                        }}
+                      >
+                        {activeButtonId === i && wavesurfer.isPlaying() ? (
+                          <PauseOutlined />
+                        ) : (
+                          <CaretRightOutlined />
+                        )}
+                      </button>
+                      <div className="transcription">
+                        <span
                           style={{
-                            color:
-                              activeButtonId === i && wavesurfer.isPlaying()
-                                ? "green"
-                                : "",
+                            color: isDarkMode ? "#fff" : "#000",
+                            fontSize: "1.125rem",
                           }}
                         >
-                          {activeButtonId === i && wavesurfer.isPlaying() ? (
-                            <FaPause />
-                          ) : (
-                            <FaPlay />
-                          )}
-                        </button>
-                      </>
-                      <div className="transcription">
-                        <span style={{ color: isDarkMode ? "#fff" : "#000" }}>
                           {item.text}
                         </span>
                       </div>
+                      <Popover
+                        content={
+                          <Table
+                            columns={emotionColumns}
+                            dataSource={item.emotion}
+                            pagination={false}
+                            size="small"
+                          />
+                        }
+                        title="Chi tiết"
+                        trigger="hover"
+                      >
+                        <span style={{ cursor: "pointer", marginLeft: "10px" }}>
+                          {item?.emotion
+                            .sort((a, b) => b.percent - a.percent)
+                            .slice(0, 2)
+                            .map((e, index) => (
+                              <span
+                                key={index}
+                                style={{
+                                  color: getEmotionColor(e.key.trim()),
+                                  fontSize: "1rem",
+                                  display: "flex",
+                                  justifyContent: "space-between",
+                                  width: "7.5rem",
+                                  alignItems: "center",
+                                }}
+                              >
+                                <span>{getEmotionName(e.key.trim())}</span>
+                                <span
+                                  style={{
+                                    flex: "1 1 auto",
+                                    minWidth: "50%",
+                                    textAlign: "right",
+                                  }}
+                                >
+                                  {": " + e.percent + "%"}
+                                </span>
+                              </span>
+                            )) || "Không có dữ liệu"}
+                        </span>
+                      </Popover>
                     </div>
                   </List.Item>
                 )}

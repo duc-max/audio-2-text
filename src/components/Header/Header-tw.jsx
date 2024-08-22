@@ -1,81 +1,25 @@
 "use client";
 
 import { useState, useContext } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-} from "@headlessui/react";
-import {
-  ArrowPathIcon,
-  Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-  ChevronUpIcon,
-} from "@heroicons/react/20/solid";
+import { Dialog, DialogPanel, PopoverGroup } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ControlOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import "./Header.css";
 import { Switch } from "antd";
 import { Context } from "../../context/Context";
 
-const products = [
-  {
-    name: "Analytics",
-    description: "Get a better understanding of your traffic",
-    href: "#",
-    icon: ChartPieIcon,
-  },
-  {
-    name: "Engagement",
-    description: "Speak directly to your customers",
-    href: "#",
-    icon: CursorArrowRaysIcon,
-  },
-  {
-    name: "Security",
-    description: "Your customers’ data will be safe and secure",
-    href: "#",
-    icon: FingerPrintIcon,
-  },
-  {
-    name: "Integrations",
-    description: "Connect with third-party tools",
-    href: "#",
-    icon: SquaresPlusIcon,
-  },
-  {
-    name: "Automations",
-    description: "Build strategic funnels that will convert",
-    href: "#",
-    icon: ArrowPathIcon,
-  },
-];
-const callsToAction = [
-  { name: "Watch demo", href: "#", icon: PlayCircleIcon },
-  { name: "Contact sales", href: "#", icon: PhoneIcon },
-];
-
 export default function Headertw() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isDarkMode, handleThemeChange, hover, setHover } =
-    useContext(Context);
+  const { isDarkMode, handleThemeChange } = useContext(Context);
   return (
     <header
-      className=" header-container py-1 border-b border-orange-500 rounded"
-      style={{ backgroundColor: isDarkMode ? "#1f1f1f" : "#fff" }}
+      className=" header-container py-1 rounded"
+      style={{
+        backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
+        boxShadow:
+          "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
+      }}
     >
       <nav
         aria-label="Global"
@@ -107,9 +51,10 @@ export default function Headertw() {
             className="hover:text-[rgb(239,91,30)]  no-underline text-sm font-semibold leading-6 text-gray-900"
             style={{
               color: !isDarkMode ? "#1f1f1f" : "#fff",
+              fontSize: "1rem",
             }}
           >
-            Giới thiệu
+           <InfoCircleOutlined /> Giới thiệu
           </a>
           {/* <Popover className="relative"> */}
           {/* <PopoverButton
@@ -212,9 +157,10 @@ export default function Headertw() {
             className="hover:text-[rgb(239,91,30)] no-underline text-sm font-semibold leading-6 text-gray-900"
             style={{
               color: !isDarkMode ? "#1f1f1f" : "#fff",
+              fontSize: "1rem",
             }}
           >
-            Bộ chuyển đổi
+            <ControlOutlined /> Bộ chuyển đổi
           </a>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
@@ -272,8 +218,8 @@ export default function Headertw() {
                 >
                   Giới thiệu
                 </a>
-                <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton
+                {/* <Disclosure as="div" className="-mx-3"> */}
+                {/* <DisclosureButton
                     className="group flex w-full block rounded-lg px-3 items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 "
                     style={{
                       color: !isDarkMode ? "#1f1f1f" : "#fff",
@@ -284,8 +230,8 @@ export default function Headertw() {
                       aria-hidden="true"
                       className="h-5 w-5 flex-none group-data-[open]:rotate-180"
                     />
-                  </DisclosureButton>
-                  <DisclosurePanel className="mt-2 space-y-2">
+                  </DisclosureButton> */}
+                {/* <DisclosurePanel className="mt-2 space-y-2">
                     {[...products, ...callsToAction].map((item) => (
                       <DisclosureButton
                         key={item.name}
@@ -299,8 +245,8 @@ export default function Headertw() {
                         {item.name}
                       </DisclosureButton>
                     ))}
-                  </DisclosurePanel>
-                </Disclosure>
+                  </DisclosurePanel> */}
+                {/* </Disclosure> */}
                 <a
                   href="#"
                   className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7  "
