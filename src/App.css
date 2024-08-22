@@ -2,10 +2,22 @@
 @tailwind components;
 @tailwind utilities;
 
-#root {
+/* #root {
   font-family: Inter, system-ui, Avenir, Helvetica, Arial, sans-serif;
   font-weight: 400;
+} */
+body,
+.ant-typography,
+.ant-btn,
+.ant-layout,
+.ant-menu,
+.ant-input,
+.ant-select,
+.ant-card,
+.ant-table {
+  font-family: "Lato", sans-serif !important; /* Inherit the global font or the font set in the body */
 }
+
 /*
   1. Use a more-intuitive box-sizing model.
 */
