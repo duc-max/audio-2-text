@@ -1,95 +1,40 @@
 "use client";
 
 import { useState, useContext } from "react";
-import {
-  Dialog,
-  DialogPanel,
-  Disclosure,
-  DisclosureButton,
-  DisclosurePanel,
-  Popover,
-  PopoverButton,
-  PopoverGroup,
-  PopoverPanel,
-} from "@headlessui/react";
-import {
-  ArrowPathIcon,
-  Bars3Icon,
-  ChartPieIcon,
-  CursorArrowRaysIcon,
-  FingerPrintIcon,
-  SquaresPlusIcon,
-  XMarkIcon,
-} from "@heroicons/react/24/outline";
-import {
-  ChevronDownIcon,
-  PhoneIcon,
-  PlayCircleIcon,
-  ChevronUpIcon,
-} from "@heroicons/react/20/solid";
+import { Dialog, DialogPanel, PopoverGroup } from "@headlessui/react";
+import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
+import { ControlOutlined } from "@ant-design/icons";
+import { InfoCircleOutlined } from "@ant-design/icons";
 import "./Header.css";
 import { Switch } from "antd";
 import { Context } from "../../context/Context";
-
-const products = [
-  {
-    name: "Analytics",
-    description: "Get a better understanding of your traffic",
-    href: "#",
-    icon: ChartPieIcon,
-  },
-  {
-    name: "Engagement",
-    description: "Speak directly to your customers",
-    href: "#",
-    icon: CursorArrowRaysIcon,
-  },
-  {
-    name: "Security",
-    description: "Your customers’ data will be safe and secure",
-    href: "#",
-    icon: FingerPrintIcon,
-  },
-  {
-    name: "Integrations",
-    description: "Connect with third-party tools",
-    href: "#",
-    icon: SquaresPlusIcon,
-  },
-  {
-    name: "Automations",
-    description: "Build strategic funnels that will convert",
-    href: "#",
-    icon: ArrowPathIcon,
-  },
-];
-const callsToAction = [
-  { name: "Watch demo", href: "#", icon: PlayCircleIcon },
-  { name: "Contact sales", href: "#", icon: PhoneIcon },
-];
+import { Link } from "react-router-dom";
 
 export default function Headertw() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const { isDarkMode, handleThemeChange, hover, setHover } =
-    useContext(Context);
+  const { isDarkMode, handleThemeChange } = useContext(Context);
   return (
     <header
-      className=" header-container py-1 border-b border-orange-500 rounded"
-      style={{ backgroundColor: isDarkMode ? "#1f1f1f" : "#fff" }}
+      className=" header-container py-1 rounded"
+      style={{
+        backgroundColor: isDarkMode ? "#1f1f1f" : "#fff",
+        boxShadow:
+          "rgba(60, 64, 67, 0.3) 0px 1px 2px 0px, rgba(60, 64, 67, 0.15) 0px 1px 3px 1px",
+      }}
     >
       <nav
         aria-label="Global"
         className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8 "
       >
         <div className="flex lg:flex-1">
-          <a href="#" className=" -m-1.5 p-1.5 no-underline">
+          <Link to="/" className=" -m-1.5 p-1.5 no-underline">
             <span className="sr-only">BKAV</span>
             <img
               alt=""
               src="/assets/Logo_Bkav.svg.png"
               className="h-8 w-auto"
             />
-          </a>
+          </Link>
         </div>
         <div className="flex lg:hidden">
           <button
@@ -102,15 +47,16 @@ export default function Headertw() {
           </button>
         </div>
         <PopoverGroup className="hidden lg:flex lg:gap-x-12">
-          <a
-            href="#"
+          <Link
+            to="/"
             className="hover:text-[rgb(239,91,30)]  no-underline text-sm font-semibold leading-6 text-gray-900"
             style={{
               color: !isDarkMode ? "#1f1f1f" : "#fff",
+              fontSize: "1rem",
             }}
           >
-            Giới thiệu
-          </a>
+            <InfoCircleOutlined /> Giới thiệu
+          </Link>
           {/* <Popover className="relative"> */}
           {/* <PopoverButton
               onClick={() => setHover(!hover)}
@@ -207,15 +153,16 @@ export default function Headertw() {
               </div> */}
           {/* </PopoverPanel>
           </Popover> */}
-          <a
-            href="#"
+          <Link
+            to="/converter"
             className="hover:text-[rgb(239,91,30)] no-underline text-sm font-semibold leading-6 text-gray-900"
             style={{
               color: !isDarkMode ? "#1f1f1f" : "#fff",
+              fontSize: "1rem",
             }}
           >
-            Bộ chuyển đổi
-          </a>
+            <ControlOutlined /> Bộ chuyển đổi
+          </Link>
         </PopoverGroup>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
           <Switch
@@ -240,8 +187,8 @@ export default function Headertw() {
           }}
         >
           <div className="flex items-center justify-between">
-            <a
-              href="#"
+            <Link
+              to="/"
               className="hover:text-[rgb(239,91,30)] no-underline -m-1.5 p-1.5"
             >
               <span className="sr-only">BKAV</span>
@@ -250,7 +197,7 @@ export default function Headertw() {
                 src="assets/Logo_Bkav.svg.png"
                 className="h-8 w-auto"
               />
-            </a>
+            </Link>
             <button
               type="button"
               onClick={() => setMobileMenuOpen(false)}
@@ -263,17 +210,17 @@ export default function Headertw() {
           <div className="mt-6 flow-root">
             <div className="-my-6 divide-y divide-gray-500/10">
               <div className="space-y-2 py-6">
-                <a
-                  href="#"
+                <Link
+                  to="/"
                   className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7  "
                   style={{
                     color: !isDarkMode ? "#1f1f1f" : "#fff",
                   }}
                 >
                   Giới thiệu
-                </a>
-                <Disclosure as="div" className="-mx-3">
-                  <DisclosureButton
+                </Link>
+                {/* <Disclosure as="div" className="-mx-3"> */}
+                {/* <DisclosureButton
                     className="group flex w-full block rounded-lg px-3 items-center justify-between rounded-lg py-2 pl-3 pr-3.5 text-base font-semibold leading-7 "
                     style={{
                       color: !isDarkMode ? "#1f1f1f" : "#fff",
@@ -284,8 +231,8 @@ export default function Headertw() {
                       aria-hidden="true"
                       className="h-5 w-5 flex-none group-data-[open]:rotate-180"
                     />
-                  </DisclosureButton>
-                  <DisclosurePanel className="mt-2 space-y-2">
+                  </DisclosureButton> */}
+                {/* <DisclosurePanel className="mt-2 space-y-2">
                     {[...products, ...callsToAction].map((item) => (
                       <DisclosureButton
                         key={item.name}
@@ -299,17 +246,17 @@ export default function Headertw() {
                         {item.name}
                       </DisclosureButton>
                     ))}
-                  </DisclosurePanel>
-                </Disclosure>
-                <a
-                  href="#"
+                  </DisclosurePanel> */}
+                {/* </Disclosure> */}
+                <Link
+                  to="/converter"
                   className="hover:text-[rgb(239,91,30)] no-underline -mx-3 block rounded-lg px-3 py-2 text-base font-semibold leading-7  "
                   style={{
                     color: !isDarkMode ? "#1f1f1f" : "#fff",
                   }}
                 >
                   Bộ chuyển đổi
-                </a>
+                </Link>
               </div>
               <div className="py-6">
                 <Switch
